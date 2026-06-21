@@ -1,0 +1,203 @@
+// GEO Loan - Loan Web Application Schema
+generator client {
+  provider = "prisma-client-js"
+  // "native" = this dev machine. The rhel targets cover Namecheap shared hosting
+  // (CloudLinux / RHEL). Keep the one matching the server's OpenSSL; run
+  // `npx prisma generate` again ON the server after upload to be safe.
+  binaryTargets = ["native", "rhel-openssl-1.1.x", "rhel-openssl-3.0.x", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============ USER ============
+model User {
+  id           String   @id @default(cuid())
+  phone        String   @unique
+  password     String
+  securityQuestion String?            // password recovery (no OTP)
+  securityAnswer   String?            // bcrypt hash of the normalized answer
+  fullName     String?
+  cnic         String?
+  email        String?
+  dob          String?
+  address      String?
+  role         String   @default("USER") // USER | ADMIN
+  kycStatus    String   @default("PENDING") // PENDING | SUBMITTED | APPROVED | REJECTED
+  kycNote      String?            // admin feedback shown to the user on rejection
+  kycSubmittedAt DateTime?        // when KYC was submitted (drives the review timer)
+  cnicFront    String?
+  cnicBack     String?
+  selfie       String?
+  // Loan wallet state
+  walletBalance Float  @default(0)
+  withdrawUnlocked Boolean @default(false)
+  currentLoanId String?
+  // timestamps
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  loans        Loan[]
+  payments     Payment[]
+  notifications Notification[]
+  withdrawals  Withdrawal[]
+  kycSubmissions KycSubmission[]
+
+  @@index([role])
+}
+
+// ============ LOAN ============
+model Loan {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount          Float    // principal
+  markupPercent   Float    @default(5)
+  totalRepayment  Float
+  weeklyInstallment Float
+  downPayment     Float    // 12% of principal
+  termWeeks       Int      @default(4)
+  status          String   @default("PENDING")
+  // PENDING -> APPROVED (KYC ok) -> ACTIVE (loan deposited to wallet)
+  // -> DOWN_PAYMENT_PENDING -> DOWN_PAYMENT_APPROVED
+  // -> INST1_PENDING -> INST1_APPROVED
+  // -> WITHDRAW_UNLOCKED -> WITHDRAWN
+  // -> REPAID | REJECTED
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  payments        Payment[]
+  installments    Installment[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+// ============ INSTALLMENT ============
+model Installment {
+  id          String   @id @default(cuid())
+  loanId      String
+  loan        Loan     @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  weekNumber  Int
+  amount      Float
+  dueDate     DateTime
+  status      String   @default("PENDING") // PENDING | PAID | OVERDUE
+  paidAt      DateTime?
+  createdAt   DateTime @default(now())
+
+  @@index([loanId])
+}
+
+// ============ PAYMENT (screenshot uploads for approval) ============
+model Payment {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  loanId        String?
+  loan          Loan?    @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  type          String   // DOWN_PAYMENT | INSTALLMENT | OTHER
+  amount        Float
+  screenshotPath String
+  status        String   @default("PENDING") // PENDING | APPROVED | REJECTED
+  adminNote     String?
+  reviewedBy    String?
+  reviewedAt    DateTime?
+  createdAt     DateTime @default(now())
+
+  @@index([userId])
+  @@index([status])
+  @@index([type])
+}
+
+// ============ KYC SUBMISSION (full audit trail — every submission is saved) ============
+model KycSubmission {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phone      String?            // snapshot of the user's phone at submission time
+  fullName   String?
+  cnic       String?
+  email      String?
+  dob        String?
+  address    String?
+  cnicFront  String?
+  cnicBack   String?
+  selfie     String?
+  status     String   @default("SUBMITTED") // SUBMITTED | APPROVED | REJECTED
+  adminNote  String?
+  reviewedBy String?
+  reviewedAt DateTime?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([status])
+}
+
+// ============ WITHDRAWAL (payout request -> admin sends money -> transaction id) ============
+model Withdrawal {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  loanId        String?
+  amount        Float
+  method        String   // easypaisa | jazzcash | bank
+  bank          String?            // bank name when method = bank
+  accountNumber String
+  accountTitle  String
+  status        String   @default("PENDING") // PENDING | PAID | REJECTED
+  transactionId String?            // entered by admin when the payout is sent
+  adminNote     String?            // rejection reason shown to the user
+  reviewedBy    String?
+  reviewedAt    DateTime?
+  createdAt     DateTime @default(now())
+
+  @@index([userId])
+  @@index([status])
+}
+
+// ============ NOTIFICATION ============
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   @default("INFO") // INFO | SUCCESS | WARNING | PAYMENT
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+// ============ SETTINGS (single-row table for app config) ============
+model Setting {
+  id        String   @id @default("default")
+  bankName         String  @default("HBL - Habib Bank Ltd")
+  accountTitle     String  @default("GEO Loan (Pvt) Ltd")
+  accountNumber    String  @default("1234-5678-9012-3456")
+  mobileAccount    String  @default("0300-1234567")
+  markupPercent    Float   @default(5)
+  downPaymentPercent Float @default(12)
+  loyaltyDiscountPerLoan Float @default(1)  // markup % reduced per fully-repaid loan (loyalty reward)
+  minMarkupPercent       Float @default(2)  // floor markup for repeat customers
+  loanPackages     String  @default("[8000,14000,18500,24000]")
+  adminPhone       String  @default("03000000000")
+  adminPassword    String  @default("admin123")
+  apkPath          String?            // public path to the uploaded Android APK
+  apkVersion       String?            // optional label shown on the download button
+  updatedAt DateTime @updatedAt
+}
+
+// ============ REEL (customer testimonial videos for the landing page) ============
+model Reel {
+  id         String   @id @default(cuid())
+  title      String
+  subtitle   String?
+  videoPath  String                 // public path, e.g. /reels/<file>.mp4
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  @@index([order])
+}

@@ -1,0 +1,367 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-urdu: var(--font-urdu-face), "Noto Naskh Arabic", serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-gold: var(--gold);
+  --color-gold-foreground: var(--gold-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* ============================================================
+   GEO Loan.pk — brand theme: forest GREEN + GOLD (from logo)
+   Tagline: آسان قرض، روشن مستقبل (easy loans, a brighter future)
+   Single source of truth: change these tokens to re-skin the app.
+   ============================================================ */
+:root {
+  --radius: 0.75rem;
+
+  --background: oklch(0.99 0.006 140);
+  --foreground: oklch(0.22 0.03 155);
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.03 155);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.03 155);
+
+  /* Brand: forest green */
+  --primary: oklch(0.51 0.14 151);
+  --primary-foreground: oklch(0.99 0.01 140);
+
+  --secondary: oklch(0.96 0.012 150);
+  --secondary-foreground: oklch(0.3 0.05 152);
+
+  --muted: oklch(0.965 0.01 150);
+  --muted-foreground: oklch(0.52 0.025 152);
+
+  /* Accent: soft green tint */
+  --accent: oklch(0.95 0.04 150);
+  --accent-foreground: oklch(0.4 0.1 151);
+
+  /* Gold — the logo's secondary brand color (highlights, accents, premium) */
+  --gold: oklch(0.74 0.13 88);
+  --gold-foreground: oklch(0.3 0.06 80);
+
+  /* Emerald = money / success */
+  --success: oklch(0.6 0.14 158);
+  --success-foreground: oklch(0.99 0.01 140);
+
+  /* Amber = warning / pending (kept distinct from brand gold) */
+  --warning: oklch(0.77 0.16 64);
+  --warning-foreground: oklch(0.32 0.08 60);
+
+  --destructive: oklch(0.58 0.22 27);
+
+  --border: oklch(0.91 0.012 145);
+  --input: oklch(0.91 0.012 145);
+  --ring: oklch(0.51 0.14 151);
+
+  --chart-1: oklch(0.51 0.14 151);   /* green */
+  --chart-2: oklch(0.74 0.13 88);    /* gold */
+  --chart-3: oklch(0.6 0.14 158);    /* emerald */
+  --chart-4: oklch(0.77 0.16 64);    /* amber */
+  --chart-5: oklch(0.55 0.09 200);   /* teal */
+
+  --sidebar: oklch(0.99 0.008 140);
+  --sidebar-foreground: oklch(0.22 0.03 155);
+  --sidebar-primary: oklch(0.51 0.14 151);
+  --sidebar-primary-foreground: oklch(0.99 0.01 140);
+  --sidebar-accent: oklch(0.95 0.04 150);
+  --sidebar-accent-foreground: oklch(0.4 0.1 151);
+  --sidebar-border: oklch(0.91 0.012 145);
+  --sidebar-ring: oklch(0.51 0.14 151);
+}
+
+.dark {
+  --background: oklch(0.2 0.025 155);
+  --foreground: oklch(0.97 0.008 140);
+
+  --card: oklch(0.25 0.03 155);
+  --card-foreground: oklch(0.97 0.008 140);
+  --popover: oklch(0.25 0.03 155);
+  --popover-foreground: oklch(0.97 0.008 140);
+
+  --primary: oklch(0.66 0.15 150);
+  --primary-foreground: oklch(0.2 0.03 155);
+
+  --secondary: oklch(0.31 0.03 155);
+  --secondary-foreground: oklch(0.97 0.008 140);
+
+  --muted: oklch(0.31 0.03 155);
+  --muted-foreground: oklch(0.72 0.02 150);
+
+  --accent: oklch(0.34 0.06 151);
+  --accent-foreground: oklch(0.92 0.04 150);
+
+  --gold: oklch(0.79 0.13 88);
+  --gold-foreground: oklch(0.24 0.05 80);
+
+  --success: oklch(0.68 0.14 158);
+  --success-foreground: oklch(0.2 0.03 155);
+
+  --warning: oklch(0.8 0.15 66);
+  --warning-foreground: oklch(0.25 0.06 60);
+
+  --destructive: oklch(0.7 0.19 22);
+
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(0.66 0.15 150);
+
+  --chart-1: oklch(0.66 0.15 150);
+  --chart-2: oklch(0.79 0.13 88);
+  --chart-3: oklch(0.68 0.14 158);
+  --chart-4: oklch(0.8 0.15 66);
+  --chart-5: oklch(0.62 0.09 200);
+
+  --sidebar: oklch(0.25 0.03 155);
+  --sidebar-foreground: oklch(0.97 0.008 140);
+  --sidebar-primary: oklch(0.66 0.15 150);
+  --sidebar-primary-foreground: oklch(0.2 0.03 155);
+  --sidebar-accent: oklch(0.34 0.06 151);
+  --sidebar-accent-foreground: oklch(0.92 0.04 150);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.66 0.15 150);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* ============================================================
+   GEO Loan.pk brand gradients & utilities
+   ============================================================ */
+.geo-gradient {
+  background: linear-gradient(135deg, oklch(0.58 0.15 150), oklch(0.44 0.13 153));
+}
+.geo-gradient-gold {
+  background: linear-gradient(135deg, oklch(0.82 0.13 92), oklch(0.66 0.12 78));
+}
+.geo-gradient-emerald {
+  background: linear-gradient(135deg, oklch(0.64 0.15 158), oklch(0.52 0.13 160));
+}
+.geo-gradient-amber {
+  background: linear-gradient(135deg, oklch(0.82 0.16 78), oklch(0.72 0.16 60));
+}
+.geo-gradient-rose {
+  background: linear-gradient(135deg, oklch(0.65 0.22 20), oklch(0.55 0.22 25));
+}
+/* Subtle page background wash (green + gold) */
+.geo-surface {
+  background:
+    radial-gradient(1200px 600px at 100% -10%, oklch(0.92 0.06 150 / 0.6), transparent 60%),
+    radial-gradient(900px 500px at -10% 5%, oklch(0.93 0.07 92 / 0.4), transparent 55%),
+    var(--background);
+}
+/* Thin gold rule (echoes the logo underline) */
+.geo-rule-gold {
+  height: 3px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* Card ring used across panels */
+.geo-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 1px 2px oklch(0.3 0.05 155 / 0.05), 0 1px 1px oklch(0.3 0.05 155 / 0.04);
+}
+
+/* Hide scrollbar in mobile-style container */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Phone-like container for the mobile-first user app */
+.phone-shell {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--card);
+  position: relative;
+}
+@media (min-width: 640px) {
+  .phone-shell {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    min-height: calc(100vh - 3rem);
+    border-radius: 28px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 24px 60px -20px oklch(0.3 0.07 155 / 0.3);
+  }
+}
+
+/* ============================================================
+   GEO Loan.pk — landing motion & premium surfaces
+   (Framer Motion handles entrances/scroll/tilt; CSS handles
+   ambient loops + hover so they stay light and easy to gate.)
+   ============================================================ */
+
+/* Animated brand gradient (CTA banner, accents) */
+.geo-gradient-animated {
+  background: linear-gradient(120deg,
+    oklch(0.56 0.15 150), oklch(0.44 0.13 153),
+    oklch(0.6 0.14 158), oklch(0.46 0.13 151));
+  background-size: 220% 220%;
+  animation: geo-gradient-pan 14s ease infinite;
+}
+@keyframes geo-gradient-pan {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Sweeping shine on hover (premium buttons) */
+.geo-shine { position: relative; overflow: hidden; }
+.geo-shine::after {
+  content: "";
+  position: absolute; inset: 0; left: -150%;
+  width: 60%;
+  background: linear-gradient(100deg, transparent, oklch(1 0 0 / 0.45), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.75s cubic-bezier(.2,.7,.3,1);
+  pointer-events: none;
+}
+.geo-shine:hover::after { left: 160%; }
+
+/* Slow shine sweep that loops (CTA banner sparkle) */
+.geo-shine-loop::before {
+  content: "";
+  position: absolute; inset: 0; left: -60%;
+  width: 45%;
+  background: linear-gradient(100deg, transparent, oklch(1 0 0 / 0.18), transparent);
+  transform: skewX(-20deg);
+  animation: geo-sweep 6s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes geo-sweep {
+  0% { left: -60%; }
+  55%, 100% { left: 160%; }
+}
+
+/* Card hover: lift + glow border */
+.geo-hover-card {
+  transition: transform .4s cubic-bezier(.2,.7,.3,1), box-shadow .4s ease, border-color .4s ease;
+}
+.geo-hover-card:hover {
+  transform: translateY(-6px);
+  will-change: transform; /* promote only while hovered, not permanently */
+  border-color: oklch(0.51 0.14 151 / 0.45);
+  box-shadow: 0 22px 48px -22px oklch(0.45 0.12 152 / 0.5), 0 0 0 1px oklch(0.51 0.14 151 / 0.1);
+}
+
+/* Glassmorphism surface (badges, floating chips) */
+.geo-glass {
+  background: oklch(1 0 0 / 0.6);
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  border: 1px solid oklch(1 0 0 / 0.65);
+  box-shadow: 0 10px 34px -14px oklch(0.4 0.08 152 / 0.28);
+}
+
+/* Ambient floating (decorative trust chips, mockup) */
+@keyframes geo-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.geo-float { animation: geo-float 6s ease-in-out infinite; }
+.geo-float-slow { animation: geo-float 9s ease-in-out infinite; }
+.geo-float-delay { animation-delay: -3s; }
+
+/* Aurora glow blobs behind the hero */
+.geo-aurora { filter: blur(48px); opacity: .55; border-radius: 9999px; pointer-events: none; }
+
+/* KYC verifying — pop-in check mark + scanning line */
+@keyframes geo-pop {
+  0% { transform: scale(.4); opacity: 0; }
+  60% { transform: scale(1.12); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.geo-pop { animation: geo-pop .4s cubic-bezier(.2,.8,.3,1) both; }
+@keyframes geo-scan-y {
+  0% { top: 8%; opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { top: 86%; opacity: 0; }
+}
+.geo-scan-line { position: absolute; animation: geo-scan-y 2.2s ease-in-out infinite; }
+
+/* Faint fintech grid texture, faded with a radial mask */
+.geo-grid {
+  background-image:
+    linear-gradient(oklch(0.51 0.14 151 / 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(0.51 0.14 151 / 0.06) 1px, transparent 1px);
+  background-size: 46px 46px;
+  -webkit-mask-image: radial-gradient(ellipse 75% 60% at 50% 0%, #000 0%, transparent 78%);
+  mask-image: radial-gradient(ellipse 75% 60% at 50% 0%, #000 0%, transparent 78%);
+  pointer-events: none;
+}
+
+/* Lighten ambient motion on small screens (battery / perf) */
+@media (max-width: 640px) {
+  .geo-float, .geo-float-slow { animation-duration: 8s; }
+  .geo-aurora { filter: blur(44px); opacity: .4; }
+}
+
+/* Accessibility: honour reduced-motion — kill ambient + entrance motion */
+@media (prefers-reduced-motion: reduce) {
+  .geo-gradient-animated,
+  .geo-float, .geo-float-slow,
+  .geo-shine-loop::before { animation: none !important; }
+  .geo-shine::after { display: none; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

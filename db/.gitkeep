@@ -1,0 +1,1 @@
+# keep the db/ folder in the package; SQLite file (custom.db) is created on the server by `prisma db push`
