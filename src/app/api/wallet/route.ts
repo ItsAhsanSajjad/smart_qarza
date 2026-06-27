@@ -16,15 +16,19 @@ export async function GET() {
   })
   if (!u) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
-  const withdrawal = await db.withdrawal.findFirst({
-    where: { userId: user.id },
-    orderBy: { createdAt: 'desc' },
-    select: {
-      id: true, amount: true, method: true, bank: true, accountNumber: true,
-      accountTitle: true, status: true, transactionId: true, adminNote: true,
-      createdAt: true, reviewedAt: true,
-    },
-  })
+  // Only the CURRENT loan's withdrawal — never a prior (repaid) loan's, otherwise a new
+  // loan would render the old "Money Sent" screen.
+  const withdrawal = u.currentLoanId
+    ? await db.withdrawal.findFirst({
+        where: { userId: user.id, loanId: u.currentLoanId },
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true, amount: true, method: true, bank: true, accountNumber: true,
+          accountTitle: true, status: true, transactionId: true, adminNote: true,
+          createdAt: true, reviewedAt: true,
+        },
+      })
+    : null
 
   return NextResponse.json({ ...u, withdrawal })
 }

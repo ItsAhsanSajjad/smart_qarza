@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { db } from '@/lib/db'
-import { createSession, SESSION_COOKIE, sessionCookieOptions } from '@/lib/auth'
 import { seedDefaults } from '@/lib/seed'
 import {
   normalizePhone, isValidPhone, isValidPassword, isValidName, sanitizeName,
@@ -55,10 +54,6 @@ export async function POST(req: NextRequest) {
     },
   })
 
-  const token = await createSession(user.id)
-  const res = NextResponse.json({
-    user: { id: user.id, phone: user.phone, role: user.role, fullName: user.fullName },
-  })
-  res.cookies.set(SESSION_COOKIE, token, sessionCookieOptions())
-  return res
+  // No session is created here — the user must log in after registering.
+  return NextResponse.json({ ok: true, user: { id: user.id, phone: user.phone } })
 }

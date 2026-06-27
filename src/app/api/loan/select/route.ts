@@ -67,12 +67,17 @@ export async function POST(req: NextRequest) {
     },
   })
 
-  // Deposit loan amount to wallet (per original flow: shown in balance after 2 min "processing")
+  // Deposit loan amount to wallet (per original flow: shown in balance after 2 min "processing").
+  // IMPORTANT: a new loan starts LOCKED — withdrawUnlocked must be false until the down
+  // payment + 1st installment for THIS loan are approved. Carrying over a previous loan's
+  // withdrawUnlocked=true would let the user withdraw without paying the fees and would
+  // strand them on the old "Money Sent" screen.
   await db.user.update({
     where: { id: user.id },
     data: {
       currentLoanId: loan.id,
       walletBalance: calc.amount,
+      withdrawUnlocked: false,
     },
   })
 

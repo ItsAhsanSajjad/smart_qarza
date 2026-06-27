@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import {
   Loader2, LogOut, LayoutDashboard, Users, FileCheck, Wallet,
   Settings as SettingsIcon, Bell, Search, ShieldCheck, ChevronRight,
-  Check, X, Eye, Phone, Lock, ArrowLeft, RefreshCw, Banknote,
+  Check, X, Eye, EyeOff, Phone, Lock, ArrowLeft, RefreshCw, Banknote,
   Landmark, Coins, KeyRound, Menu, Video, Trash2, UploadCloud,
 } from 'lucide-react'
 import { BrandLogo, TAGLINE_UR, TAGLINE_EN } from '@/components/brand/logo'
@@ -143,6 +143,7 @@ export default function AdminPanel() {
 function AdminLogin({ onLogin }: { onLogin: () => Promise<any> }) {
   const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
+  const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const submit = async () => {
@@ -200,13 +201,21 @@ function AdminLogin({ onLogin }: { onLogin: () => Promise<any> }) {
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
-                type="password"
+                type={showPw ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && submit()}
                 placeholder="Enter password"
-                className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-border bg-background focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none text-sm transition"
+                className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-border bg-background focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none text-sm transition"
               />
+              <button
+                type="button"
+                onClick={() => setShowPw((v) => !v)}
+                aria-label={showPw ? 'Hide password' : 'Show password'}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition"
+              >
+                {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
           </div>
 
@@ -384,11 +393,25 @@ function KycBadge() {
 
 function PaymentsBadge() {
   const [count, setCount] = useState(0)
+  const prev = useRef<number | null>(null)
   useEffect(() => {
-    fetch('/api/admin/payments?status=PENDING', { cache: 'no-store' })
-      .then((r) => r.json())
-      .then((d) => setCount(d.payments?.length || 0))
-      .catch(() => {})
+    let alive = true
+    const load = () =>
+      fetch('/api/admin/payments?status=PENDING', { cache: 'no-store' })
+        .then((r) => r.json())
+        .then((d) => {
+          if (!alive) return
+          const n = d.payments?.length || 0
+          if (prev.current !== null && n > prev.current) {
+            toast('🔔 New payment submitted', { description: 'Open Payments to review.' })
+          }
+          prev.current = n
+          setCount(n)
+        })
+        .catch(() => {})
+    load()
+    const t = setInterval(load, 10000)
+    return () => { alive = false; clearInterval(t) }
   }, [])
   if (count === 0) return null
   return (
@@ -400,11 +423,25 @@ function PaymentsBadge() {
 
 function WithdrawalsBadge() {
   const [count, setCount] = useState(0)
+  const prev = useRef<number | null>(null)
   useEffect(() => {
-    fetch('/api/admin/withdrawals?status=PENDING', { cache: 'no-store' })
-      .then((r) => r.json())
-      .then((d) => setCount(d.withdrawals?.length || 0))
-      .catch(() => {})
+    let alive = true
+    const load = () =>
+      fetch('/api/admin/withdrawals?status=PENDING', { cache: 'no-store' })
+        .then((r) => r.json())
+        .then((d) => {
+          if (!alive) return
+          const n = d.withdrawals?.length || 0
+          if (prev.current !== null && n > prev.current) {
+            toast('🔔 New withdrawal request', { description: 'Open Withdrawals to process.' })
+          }
+          prev.current = n
+          setCount(n)
+        })
+        .catch(() => {})
+    load()
+    const t = setInterval(load, 10000)
+    return () => { alive = false; clearInterval(t) }
   }, [])
   if (count === 0) return null
   return (
@@ -430,16 +467,21 @@ function WithdrawalsTab() {
   const buildNote = () => [reasons.join('; '), extra.trim()].filter(Boolean).join(' — ')
   const openReject = (id: string) => { setRejectId(id); setReasons([]); setExtra('') }
 
-  const load = useCallback(() => {
-    setLoading(true)
+  const load = useCallback((silent = false) => {
+    if (!silent) setLoading(true)
     const url = filter ? `/api/admin/withdrawals?status=${filter}` : '/api/admin/withdrawals'
     fetch(url, { cache: 'no-store' })
       .then((r) => r.json())
       .then((d) => setRows(d.withdrawals || []))
       .catch(() => {})
-      .finally(() => setLoading(false))
+      .finally(() => { if (!silent) setLoading(false) })
   }, [filter])
   useEffect(() => { load() }, [load])
+  // Auto-refresh: new withdrawal requests + status changes appear without a manual refresh
+  useEffect(() => {
+    const t = setInterval(() => load(true), 10000)
+    return () => clearInterval(t)
+  }, [load])
 
   const methodLabel = (w: WithdrawalRow) =>
     w.method === 'bank' ? (w.bank || 'Bank') : w.method === 'easypaisa' ? 'EasyPaisa' : w.method === 'jazzcash' ? 'JazzCash' : w.method
@@ -499,7 +541,7 @@ function WithdrawalsTab() {
             {f.label}
           </button>
         ))}
-        <button onClick={load} className="ml-auto px-3.5 py-1.5 rounded-lg text-xs font-medium bg-card border border-border text-slate-600 inline-flex items-center gap-1.5 hover:bg-muted transition">
+        <button onClick={() => load()} className="ml-auto px-3.5 py-1.5 rounded-lg text-xs font-medium bg-card border border-border text-slate-600 inline-flex items-center gap-1.5 hover:bg-muted transition">
           <RefreshCw className="w-3 h-3" /> Refresh
         </button>
       </div>
@@ -980,17 +1022,22 @@ function PaymentsTab() {
   ]
   const openReject = (id: string) => { setSelected(null); setRejectId(id); setReasons([]); setExtra('') }
 
-  const load = useCallback(() => {
-    setLoading(true)
+  const load = useCallback((silent = false) => {
+    if (!silent) setLoading(true)
     const url = filter ? `/api/admin/payments?status=${filter}` : '/api/admin/payments'
     fetch(url, { cache: 'no-store' })
       .then((r) => r.json())
       .then((d) => setPayments(d.payments || []))
       .catch(() => {})
-      .finally(() => setLoading(false))
+      .finally(() => { if (!silent) setLoading(false) })
   }, [filter])
 
   useEffect(() => { load() }, [load])
+  // Auto-refresh: new payments + status changes appear without a manual refresh
+  useEffect(() => {
+    const t = setInterval(() => load(true), 10000)
+    return () => clearInterval(t)
+  }, [load])
 
   const act = async (id: string, action: 'approve' | 'reject', note?: string) => {
     setActionLoading(true)
@@ -1032,7 +1079,7 @@ function PaymentsTab() {
           </button>
         ))}
         <button
-          onClick={load}
+          onClick={() => load()}
           className="ml-auto px-3.5 py-1.5 rounded-lg text-xs font-medium bg-card border border-border text-slate-600 inline-flex items-center gap-1.5 hover:bg-muted transition"
         >
           <RefreshCw className="w-3 h-3" /> Refresh
@@ -1353,7 +1400,7 @@ function LoansTab() {
           </button>
         ))}
         <button
-          onClick={load}
+          onClick={() => load()}
           className="ml-auto px-3.5 py-1.5 rounded-lg text-xs font-medium bg-card border border-border text-slate-600 inline-flex items-center gap-1.5 hover:bg-muted transition"
         >
           <RefreshCw className="w-3 h-3" /> Refresh

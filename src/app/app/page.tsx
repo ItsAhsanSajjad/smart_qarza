@@ -212,7 +212,9 @@ function AuthScreen({
       })
       const d = await r.json()
       if (!r.ok) return toast.error(d.error || 'Could not create account')
-      toast.success('Account created!'); await onAuthed()
+      toast.success('Account created! Please log in to continue.')
+      setPassword(''); setConfirmPassword('')
+      switchView('login') // send the new user to Login (phone stays filled); after login -> KYC
     } finally { setLoading(false) }
   }
 
@@ -461,6 +463,7 @@ function AppShell({ user, refresh }: { user: MeUser; refresh: () => Promise<any>
   const [screen, setScreen] = useState<string>('home')
   const [loan, setLoan] = useState<Loan | null>(null)
   const [pending, setPending] = useState<PendingPayment | null>(null)
+  const [outstanding, setOutstanding] = useState(0)
   const [settings, setSettings] = useState<Settings | null>(null)
   const [notifications, setNotifications] = useState<NotificationItem[]>([])
   const [showNotifications, setShowNotifications] = useState(false)
@@ -479,11 +482,13 @@ function AppShell({ user, refresh }: { user: MeUser; refresh: () => Promise<any>
     if (loanR.loan) setLoan(loanR.loan)
     else setLoan(null)
     setPending(loanR.pendingPayment || pendR.pending || null)
+    setOutstanding(loanR.outstanding ?? 0)
     setNotifications(notifR.notifications || [])
     if (loanR.loan) {
       const status = loanR.loan.status as string
       if (status === 'WITHDRAWN') setScreen('dashboard')
-      else if (status === 'WITHDRAW_PENDING' || status === 'INST1_APPROVED' || loanR.withdrawUnlocked) setScreen('withdraw_ready')
+      // Withdraw screen only for THIS loan's withdraw states — never a stale per-user flag
+      else if (status === 'WITHDRAW_PENDING' || status === 'INST1_APPROVED') setScreen('withdraw_ready')
       else if (status === 'DOWN_PAYMENT_APPROVED') {
         if (loanR.pendingPayment) setScreen('pending')
         else setScreen('installment_payment')
@@ -611,7 +616,10 @@ function AppShell({ user, refresh }: { user: MeUser; refresh: () => Promise<any>
           {screen === 'withdraw_ready' && loan && (
             <WithdrawReadyScreen user={user} loan={loan} onWithdrawn={async () => { await refresh(); await loadData() }} />
           )}
-          {screen === 'dashboard' && loan && <DashboardScreen loan={loan} user={user} />}
+          {screen === 'dashboard' && loan && <DashboardScreen loan={loan} user={user} outstanding={outstanding} pending={pending} onRepay={() => setScreen('repay')} />}
+          {screen === 'repay' && loan && (
+            <RepayScreen loan={loan} settings={settings} outstanding={outstanding} onSubmitted={() => loadData()} onBack={() => setScreen('dashboard')} />
+          )}
         </div>
 
         <div className="border-t border-slate-200 p-3 flex items-center justify-between bg-white">
@@ -1647,40 +1655,150 @@ function WithdrawReadyScreen({ loan, onWithdrawn }: {
   )
 }
 
-function DashboardScreen({ loan }: { loan: Loan; user: MeUser }) {
+function RepayScreen({ loan, settings, outstanding, onSubmitted, onBack }: {
+  loan: Loan; settings: Settings | null; outstanding: number; onSubmitted: () => void; onBack: () => void
+}) {
+  const [mode, setMode] = useState<'full' | 'partial'>('full')
+  const [amountStr, setAmountStr] = useState(String(Math.round(outstanding)))
+  const [file, setFile] = useState<File | null>(null)
+  const [preview, setPreview] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
+
+  const amount = mode === 'full' ? outstanding : (parseFloat(amountStr) || 0)
+
+  const submit = async () => {
+    if (submitting) return
+    if (amount <= 0) return toast.error('Enter a valid amount')
+    if (amount > outstanding + 0.01) return toast.error('Amount exceeds the outstanding balance')
+    if (!file) return toast.error('Please upload your payment screenshot')
+    setSubmitting(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      fd.append('type', 'REPAYMENT')
+      fd.append('amount', String(Math.round(amount)))
+      fd.append('loanId', loan.id)
+      const r = await fetch('/api/payment/upload', { method: 'POST', body: fd })
+      const d = await r.json()
+      if (!r.ok) { toast.error(d.error || 'Failed'); setSubmitting(false); return }
+      toast.success('Repayment submitted — under review')
+      onSubmitted()
+    } catch {
+      toast.error('Something went wrong. Please try again.')
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <div>
+      <button onClick={onBack} className="text-xs text-slate-500 hover:text-primary inline-flex items-center gap-1 mb-2"><ArrowLeft className="w-3.5 h-3.5" /> Back</button>
+      <SectionTitle Icon={Banknote} title="Repay Your Loan" />
+
+      <div className="geo-gradient-emerald text-white rounded-2xl p-5 text-center mt-3 shadow-sm">
+        <div className="text-xs uppercase tracking-wide text-gold font-semibold">Outstanding Balance</div>
+        <div className="text-3xl font-bold my-2">PKR {Math.round(outstanding).toLocaleString()}</div>
+      </div>
+
+      <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-700 flex gap-2">
+        <Info className="w-4 h-4 shrink-0 mt-0.5" />
+        <span>Repay anytime — partial or full. The full markup is already included; paying early does not reduce it.</span>
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-2">
+        <button onClick={() => { setMode('full'); setAmountStr(String(Math.round(outstanding))) }} className={`py-2.5 rounded-xl text-sm font-semibold border-2 transition ${mode === 'full' ? 'border-primary bg-primary/5 text-primary' : 'border-slate-200 text-slate-600 hover:border-primary/50'}`}>Pay Full</button>
+        <button onClick={() => setMode('partial')} className={`py-2.5 rounded-xl text-sm font-semibold border-2 transition ${mode === 'partial' ? 'border-primary bg-primary/5 text-primary' : 'border-slate-200 text-slate-600 hover:border-primary/50'}`}>Pay Partial</button>
+      </div>
+      {mode === 'partial' && (
+        <div className="mt-3">
+          <label className="block text-xs font-semibold text-slate-700 mb-1.5">Amount to pay (PKR)</label>
+          <input value={amountStr} onChange={(e) => setAmountStr(e.target.value.replace(/[^0-9]/g, ''))} inputMode="numeric" placeholder="e.g. 5000"
+            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none text-sm transition" />
+          {amount > outstanding && <p className="mt-1 text-[11px] text-amber-600">Max is PKR {Math.round(outstanding).toLocaleString()}</p>}
+        </div>
+      )}
+
+      <div className="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-2xl">
+        <div className="text-xs font-semibold text-slate-700 mb-2">Send your payment to:</div>
+        <div className="bg-white rounded-xl p-3 space-y-1.5 border border-slate-100">
+          <CopyRow label="Account Title" value={settings?.accountTitle || 'GEO Loan (Pvt) Ltd'} />
+          <CopyRow label="Account Number" value={settings?.accountNumber || '1234-5678-9012-3456'} />
+          <CopyRow label="EasyPaisa / JazzCash" value={settings?.mobileAccount || '0300-1234567'} />
+        </div>
+      </div>
+
+      <SectionTitle Icon={Camera} title="Upload Payment Screenshot" className="mt-5" />
+      <UploadArea file={file} preview={preview} onSelect={(f, p) => { setFile(f); setPreview(p) }} />
+
+      <button onClick={submit} disabled={!file || submitting || amount <= 0}
+        className="w-full mt-4 bg-primary text-primary-foreground py-3 rounded-xl font-semibold disabled:opacity-60 flex items-center justify-center gap-2 shadow-sm hover:opacity-95 transition">
+        {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+        Submit Payment{amount > 0 ? ` · PKR ${Math.round(amount).toLocaleString()}` : ''}
+      </button>
+    </div>
+  )
+}
+
+function DashboardScreen({ loan, outstanding, pending, onRepay }: {
+  loan: Loan; user: MeUser; outstanding: number; pending: PendingPayment | null; onRepay: () => void
+}) {
+  const repayPending = pending?.type === 'REPAYMENT'
   return (
     <div>
       <SectionTitle Icon={Home} title="Dashboard" />
       <div className="geo-gradient-emerald text-white rounded-2xl p-5 text-center mt-3 shadow-sm">
-        <div className="text-xs uppercase tracking-wide text-gold font-semibold">Total Loan</div>
+        <div className="text-xs uppercase tracking-wide text-gold font-semibold">Total Repayable</div>
         <div className="text-3xl font-bold my-2">PKR {Math.round(loan.totalRepayment).toLocaleString()}</div>
         <div className="geo-rule-gold mx-auto w-16 my-2.5" />
         <div className="text-xs text-white/85">Status: <strong>Active</strong></div>
       </div>
 
-      <div className="mt-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-700 flex gap-2">
-        <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
-        <span>Your loan is active. Please pay your remaining installments on time.</span>
+      {/* Outstanding balance + early repayment */}
+      <div className="mt-4 geo-card p-4">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <div className="text-xs text-muted-foreground">Outstanding balance</div>
+            <div className="text-2xl font-bold text-slate-900">PKR {Math.round(outstanding).toLocaleString()}</div>
+          </div>
+          {outstanding > 0 ? (
+            repayPending ? (
+              <span className="text-xs font-semibold text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-center">Repayment<br />under review</span>
+            ) : (
+              <button onClick={onRepay} className="geo-gradient text-white px-4 py-2.5 rounded-xl text-sm font-semibold inline-flex items-center gap-1.5 hover:opacity-95 shadow-sm transition shrink-0">
+                <Banknote className="w-4 h-4" /> Repay Now
+              </button>
+            )
+          ) : (
+            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2 inline-flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> Fully repaid</span>
+          )}
+        </div>
+        <p className="text-[11px] text-slate-500 mt-2.5">Pay early anytime — <strong>partial or full</strong>. The full markup applies regardless of how soon you repay.</p>
       </div>
 
       <SectionTitle Icon={ListChecks} title="Installment Tracker" className="mt-5" />
       <div className="mt-3 space-y-1">
-        {loan.installments.map((inst) => (
-          <div key={inst.id} className="flex items-center gap-3 p-2.5 border-b border-slate-100 last:border-0">
-            <div className={`w-6 h-6 rounded-full grid place-items-center text-[10px] font-bold ${
-              inst.status === 'PAID' ? 'bg-emerald-600 text-white' : inst.weekNumber === 2 ? 'bg-amber-500 text-white' : 'bg-slate-100 text-slate-500'
-            }`}>
-              {inst.status === 'PAID' ? <CheckCircle2 className="w-3.5 h-3.5" /> : inst.weekNumber}
-            </div>
-            <div className="flex-1">
-              <div className="text-xs font-semibold text-slate-800">Week {inst.weekNumber}{inst.status === 'PAID' ? ' (Paid)' : ''}</div>
-              <div className="text-[10px] text-slate-500">
-                {inst.status === 'PAID' ? 'Completed' : inst.weekNumber === 2 ? 'Upcoming' : 'Scheduled'}
+        {loan.installments.map((inst) => {
+          const repaid = Math.max(0, loan.totalRepayment - outstanding)
+          const weekly = inst.amount
+          // amount still owed for THIS week (after spreading the paid amount across weeks)
+          const dueThisWeek = Math.max(0, Math.min(weekly, inst.weekNumber * weekly - repaid))
+          const paid = inst.status === 'PAID' || dueThisWeek <= 0.01
+          const partial = !paid && dueThisWeek < weekly - 0.01 // the active week, partly covered
+          const amountShown = paid ? weekly : dueThisWeek
+          return (
+            <div key={inst.id} className="flex items-center gap-3 p-2.5 border-b border-slate-100 last:border-0">
+              <div className={`w-6 h-6 rounded-full grid place-items-center text-[10px] font-bold ${
+                paid ? 'bg-emerald-600 text-white' : partial ? 'bg-amber-500 text-white' : 'bg-slate-100 text-slate-500'
+              }`}>
+                {paid ? <CheckCircle2 className="w-3.5 h-3.5" /> : inst.weekNumber}
               </div>
+              <div className="flex-1">
+                <div className="text-xs font-semibold text-slate-800">Week {inst.weekNumber}{paid ? ' (Paid)' : ''}</div>
+                <div className="text-[10px] text-slate-500">{paid ? 'Completed' : partial ? 'Remaining due' : 'Scheduled'}</div>
+              </div>
+              <div className={`text-xs font-bold ${partial ? 'text-amber-600' : 'text-slate-900'}`}>PKR {Math.round(amountShown).toLocaleString()}</div>
             </div>
-            <div className="text-xs font-bold text-slate-900">PKR {Math.round(inst.amount).toLocaleString()}</div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )

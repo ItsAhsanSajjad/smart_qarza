@@ -95,6 +95,49 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
           type: 'SUCCESS',
         },
       })
+    } else if (payment.type === 'REPAYMENT') {
+      // Loan repayment (partial or full). Accumulate approved repayments; when the
+      // full repayable amount (principal + markup) is covered -> loan REPAID.
+      // paid = approved INSTALLMENT + REPAYMENT payments (incl this one)
+      const payAgg = await tx.payment.aggregate({
+        where: { loanId: loan.id, type: { in: ['INSTALLMENT', 'REPAYMENT'] }, status: 'APPROVED' },
+        _sum: { amount: true },
+      })
+      const paid = payAgg._sum.amount || 0
+      const remaining = Math.max(0, loan.totalRepayment - paid)
+
+      // Mark every installment whose cumulative threshold is now covered as PAID
+      const weekly = loan.weeklyInstallment || loan.totalRepayment / 4
+      const insts = await tx.installment.findMany({ where: { loanId: loan.id }, orderBy: { weekNumber: 'asc' } })
+      for (const inst of insts) {
+        if (inst.status !== 'PAID' && inst.weekNumber * weekly <= paid + 0.01) {
+          await tx.installment.update({ where: { id: inst.id }, data: { status: 'PAID', paidAt: new Date() } })
+        }
+      }
+      if (remaining <= 0.01) {
+        await tx.loan.update({ where: { id: loan.id }, data: { status: 'REPAID' } })
+        await tx.installment.updateMany({ where: { loanId: loan.id, status: { not: 'PAID' } }, data: { status: 'PAID', paidAt: new Date() } })
+        // Loan done: clear the active loan and reset the per-user withdraw state so the
+        // next loan starts clean (locked, empty wallet).
+        await tx.user.update({ where: { id: payment.userId }, data: { currentLoanId: null, withdrawUnlocked: false, walletBalance: 0 } }).catch(() => {})
+        await tx.notification.create({
+          data: {
+            userId: payment.userId,
+            title: 'Loan Fully Repaid 🎉',
+            message: 'Your loan is fully repaid. Thank you! You can apply for a new loan now — at a lower interest rate as a returning customer.',
+            type: 'SUCCESS',
+          },
+        })
+      } else {
+        await tx.notification.create({
+          data: {
+            userId: payment.userId,
+            title: 'Repayment Received',
+            message: `Repayment of PKR ${Math.round(payment.amount).toLocaleString()} approved. Remaining balance: PKR ${Math.round(remaining).toLocaleString()}.`,
+            type: 'SUCCESS',
+          },
+        })
+      }
     }
   })
 

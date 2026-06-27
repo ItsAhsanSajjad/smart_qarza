@@ -3,7 +3,7 @@ import { db } from '@/lib/db'
 import { requireUser } from '@/lib/session'
 import { isAllowedImage, writeUpload, MAX_UPLOAD_BYTES, sniffImage, validateImage, extForFormat } from '@/lib/uploads'
 
-const ALLOWED_TYPES = ['DOWN_PAYMENT', 'INSTALLMENT', 'OTHER']
+const ALLOWED_TYPES = ['DOWN_PAYMENT', 'INSTALLMENT', 'REPAYMENT', 'OTHER']
 
 // POST /api/payment/upload  (multipart/form-data)
 // Fields: file, type (DOWN_PAYMENT | INSTALLMENT | OTHER), amount, loanId?
