@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { db } from '@/lib/db'
 import { seedDefaults } from '@/lib/seed'
+import { createSession, SESSION_COOKIE, sessionCookieOptions } from '@/lib/auth'
 import {
   normalizePhone, isValidPhone, isValidPassword, isValidName, sanitizeName,
   SECURITY_QUESTIONS, isValidAnswer, normalizeAnswer, PHONE_HINT,
@@ -54,6 +55,13 @@ export async function POST(req: NextRequest) {
     },
   })
 
-  // No session is created here — the user must log in after registering.
-  return NextResponse.json({ ok: true, user: { id: user.id, phone: user.phone } })
+  // Auto-login: create the session immediately so the user goes straight into the
+  // app (KYC) after registering, instead of being bounced to the login screen.
+  const token = await createSession(user.id)
+  const res = NextResponse.json({
+    ok: true,
+    user: { id: user.id, phone: user.phone, role: user.role, fullName: user.fullName },
+  })
+  res.cookies.set(SESSION_COOKIE, token, sessionCookieOptions())
+  return res
 }

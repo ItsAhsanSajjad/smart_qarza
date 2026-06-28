@@ -215,9 +215,9 @@ function AuthScreen({
       })
       const d = await r.json()
       if (!r.ok) return toast.error(d.error || 'Could not create account')
-      toast.success('Account created! Please log in to continue.')
-      setPassword(''); setConfirmPassword('')
-      switchView('login') // send the new user to Login (phone stays filled); after login -> KYC
+      // Auto-login: the register API now sets the session, so go straight into the app.
+      toast.success('Account created!')
+      await onAuthed()
     } finally { setLoading(false) }
   }
 
