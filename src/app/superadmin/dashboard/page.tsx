@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Shield, Power, KeyRound, RefreshCw, LogOut, Loader2, UserCog, LogIn } from 'lucide-react'
+import { Shield, Power, KeyRound, RefreshCw, LogOut, Loader2, UserCog, LogIn, MessageCircle } from 'lucide-react'
 
 interface SaUser {
   id: string
@@ -34,18 +34,21 @@ export default function SuperAdminDashboard() {
   const [users, setUsers] = useState<SaUser[]>([])
   const [logs, setLogs] = useState<AuditRow[]>([])
   const [maint, setMaint] = useState({ mode: false, message: '' })
+  const [chatOn, setChatOn] = useState(true)
   const [tempPw, setTempPw] = useState<{ phone: string; pw: string } | null>(null)
   const [busy, setBusy] = useState('')
 
   const loadAll = useCallback(async () => {
-    const [uR, mR, aR] = await Promise.all([
+    const [uR, mR, aR, cR] = await Promise.all([
       fetch('/api/superadmin/users', { cache: 'no-store' }).then((r) => r.json()),
       fetch('/api/superadmin/maintenance', { cache: 'no-store' }).then((r) => r.json()),
       fetch('/api/superadmin/audit', { cache: 'no-store' }).then((r) => r.json()),
+      fetch('/api/superadmin/chat', { cache: 'no-store' }).then((r) => r.json()),
     ])
     setUsers(uR.users || [])
     setMaint({ mode: !!mR.mode, message: mR.message || '' })
     setLogs(aR.logs || [])
+    setChatOn(cR.enabled !== false)
   }, [])
 
   useEffect(() => {
@@ -67,6 +70,18 @@ export default function SuperAdminDashboard() {
       body: JSON.stringify({ enabled, message: maint.message }),
     })
     setMaint((m) => ({ ...m, mode: enabled }))
+    setBusy('')
+    loadAll()
+  }
+
+  async function saveChat(enabled: boolean) {
+    setBusy('chat')
+    await fetch('/api/superadmin/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ enabled }),
+    })
+    setChatOn(enabled)
     setBusy('')
     loadAll()
   }
@@ -186,6 +201,34 @@ export default function SuperAdminDashboard() {
               className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60 text-xs font-semibold"
             >
               Bring online
+            </button>
+          </div>
+        </div>
+
+        {/* Live chat toggle */}
+        <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
+          <div className="flex items-center gap-2">
+            <MessageCircle className={`w-4 h-4 ${chatOn ? 'text-emerald-400' : 'text-slate-500'}`} />
+            <h2 className="text-sm font-semibold">Live Chat Widget</h2>
+            <span className={`ml-auto text-[10px] px-2 py-0.5 rounded-full ${chatOn ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-700 text-slate-400'}`}>
+              {chatOn ? 'ENABLED' : 'DISABLED'}
+            </span>
+          </div>
+          <p className="text-[11px] text-slate-500 mt-1 mb-3">Show or hide the Tawk.to chat button across the whole site.</p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => saveChat(true)}
+              disabled={busy === 'chat' || chatOn}
+              className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-xs font-semibold"
+            >
+              Enable chat
+            </button>
+            <button
+              onClick={() => saveChat(false)}
+              disabled={busy === 'chat' || !chatOn}
+              className="px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 disabled:opacity-50 text-xs font-semibold"
+            >
+              Disable chat
             </button>
           </div>
         </div>

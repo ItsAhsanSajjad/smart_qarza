@@ -26,6 +26,7 @@ export async function GET() {
       mobileAccount: true,
       maintenanceMode: true,
       maintenanceMessage: true,
+      chatEnabled: true,
     },
   })
   return NextResponse.json({ settings: s }, { headers: NO_CACHE })

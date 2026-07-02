@@ -190,6 +190,7 @@ model Setting {
   apkVersion       String?            // optional label shown on the download button
   maintenanceMode    Boolean @default(false) // when true, only SUPER_ADMIN can use the app
   maintenanceMessage String?                  // message shown while under maintenance
+  chatEnabled        Boolean @default(true)   // super-admin toggle for the live-chat widget
   updatedAt DateTime @updatedAt
 }
 

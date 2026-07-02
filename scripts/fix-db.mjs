@@ -135,6 +135,7 @@ const STATEMENTS = [
     "apkVersion" TEXT,
     "maintenanceMode" BOOLEAN NOT NULL DEFAULT false,
     "maintenanceMessage" TEXT,
+    "chatEnabled" BOOLEAN NOT NULL DEFAULT true,
     "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
   )`,
   `CREATE TABLE IF NOT EXISTS "AuditLog" (
@@ -193,6 +194,7 @@ const STATEMENTS = [
   `ALTER TABLE "Setting" ADD COLUMN "apkVersion" TEXT`,
   `ALTER TABLE "Setting" ADD COLUMN "maintenanceMode" BOOLEAN NOT NULL DEFAULT 0`,
   `ALTER TABLE "Setting" ADD COLUMN "maintenanceMessage" TEXT`,
+  `ALTER TABLE "Setting" ADD COLUMN "chatEnabled" BOOLEAN NOT NULL DEFAULT 1`,
   `ALTER TABLE "Loan" ADD COLUMN "markupPercent" REAL NOT NULL DEFAULT 5`,
   `ALTER TABLE "Loan" ADD COLUMN "termWeeks" INTEGER NOT NULL DEFAULT 4`,
   `ALTER TABLE "Loan" ADD COLUMN "status" TEXT NOT NULL DEFAULT 'PENDING'`,
