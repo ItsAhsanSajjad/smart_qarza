@@ -120,6 +120,13 @@ async function columnsOf(table: string): Promise<Set<string>> {
 
 export async function ensureSchema(): Promise<void> {
   if (done) return
+  // SQLite-only self-heal (shared hosting). On Postgres/other engines the schema
+  // is created by `prisma db push`/`migrate deploy` at build time, and this raw
+  // SQLite DDL (PRAGMA, DATETIME, BOOLEAN DEFAULT 0) would error — so skip it.
+  if (!(process.env.DATABASE_URL || '').startsWith('file:')) {
+    done = true
+    return
+  }
   try {
     for (const sql of CREATE_TABLES) {
       try { await db.$executeRawUnsafe(sql) } catch {}

@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { promises as fs } from 'fs'
-import path from 'path'
 import { db } from '@/lib/db'
 import { requireAdmin } from '@/lib/session'
+import { writePublicUpload } from '@/lib/uploads'
 
 const ALLOWED = ['video/mp4', 'video/webm', 'video/quicktime']
 const MAX_BYTES = 60 * 1024 * 1024 // 60MB
@@ -35,14 +34,12 @@ export async function POST(req: NextRequest) {
   }
 
   const ext = file.type === 'video/webm' ? 'webm' : file.type === 'video/quicktime' ? 'mov' : 'mp4'
-  const dir = path.join(process.cwd(), 'public', 'reels')
-  await fs.mkdir(dir, { recursive: true })
   const filename = `${Date.now()}-${Math.round(Math.random() * 1e6)}.${ext}`
-  await fs.writeFile(path.join(dir, filename), Buffer.from(await file.arrayBuffer()))
+  const videoPath = await writePublicUpload('reels', filename, Buffer.from(await file.arrayBuffer()), file.type)
 
   const order = await db.reel.count()
   const reel = await db.reel.create({
-    data: { title, subtitle: subtitle || null, videoPath: `/reels/${filename}`, order },
+    data: { title, subtitle: subtitle || null, videoPath, order },
   })
   return NextResponse.json({ ok: true, reel })
 }

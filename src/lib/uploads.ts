@@ -39,6 +39,12 @@ export function contentTypeForName(name: string): string {
   return EXT_MIME[ext] || 'application/octet-stream'
 }
 
+// Storage backend: Vercel Blob in production (serverless has no writable disk),
+// local filesystem for dev/self-hosted (cPanel). Selected by the presence of a
+// Blob token so the same code runs in both places.
+const USE_BLOB = !!process.env.BLOB_READ_WRITE_TOKEN
+const BLOB_TOKEN = process.env.BLOB_READ_WRITE_TOKEN
+
 export function uploadsRoot(): string {
   return process.env.UPLOADS_DIR
     ? path.resolve(process.env.UPLOADS_DIR)
@@ -49,24 +55,92 @@ function kindDir(kind: UploadKind): string {
   return path.join(uploadsRoot(), kind)
 }
 
-export async function writeUpload(kind: UploadKind, filename: string, buffer: Buffer): Promise<void> {
-  const dir = kindDir(kind)
-  await fs.mkdir(dir, { recursive: true })
-  await fs.writeFile(path.join(dir, filename), buffer)
-}
-
 // Safe filename: no path separators, no traversal. Filenames we generate look
 // like `<userId>-<ts>.<ext>` or `<userId>-<TYPE>-<ts>.<ext>`.
 export function isSafeName(name: string): boolean {
   return /^[A-Za-z0-9._-]+$/.test(name) && !name.includes('..')
 }
 
+// --- Private uploads (KYC docs, payment screenshots) ---------------------
+// On Blob these are stored with a deterministic, hard-to-guess pathname
+// (`kyc/<cuid userId>-<ts>.ext`) and are only ever streamed back through the
+// authenticated, ownership-checked /api/files route — the Blob URL is never
+// exposed to the client.
+export async function writeUpload(kind: UploadKind, filename: string, buffer: Buffer): Promise<void> {
+  if (USE_BLOB) {
+    const { put } = await import('@vercel/blob')
+    await put(`${kind}/${filename}`, buffer, {
+      access: 'public',
+      contentType: contentTypeForName(filename),
+      addRandomSuffix: false,
+      allowOverwrite: true,
+      token: BLOB_TOKEN,
+    })
+    return
+  }
+  const dir = kindDir(kind)
+  await fs.mkdir(dir, { recursive: true })
+  await fs.writeFile(path.join(dir, filename), buffer)
+}
+
 export async function readUpload(kind: UploadKind, filename: string): Promise<Buffer | null> {
   if (!isSafeName(filename)) return null
   try {
+    if (USE_BLOB) {
+      const { list } = await import('@vercel/blob')
+      const pathname = `${kind}/${filename}`
+      const { blobs } = await list({ prefix: pathname, limit: 1, token: BLOB_TOKEN })
+      const hit = blobs.find((b) => b.pathname === pathname)
+      if (!hit) return null
+      const res = await fetch(hit.url, { cache: 'no-store' })
+      if (!res.ok) return null
+      return Buffer.from(await res.arrayBuffer())
+    }
     return await fs.readFile(path.join(kindDir(kind), filename))
   } catch {
     return null
+  }
+}
+
+// --- Public uploads (customer reels, Android APK) ------------------------
+// Returns a URL/path to store in the DB and use directly as a src: a Blob URL
+// in production, or a `/reels/…` / `/downloads/…` public path in dev.
+export type PublicKind = 'reels' | 'downloads'
+
+export async function writePublicUpload(
+  kind: PublicKind,
+  filename: string,
+  buffer: Buffer,
+  contentType: string
+): Promise<string> {
+  if (USE_BLOB) {
+    const { put } = await import('@vercel/blob')
+    const { url } = await put(`${kind}/${filename}`, buffer, {
+      access: 'public',
+      contentType,
+      addRandomSuffix: false,
+      allowOverwrite: true,
+      token: BLOB_TOKEN,
+    })
+    return url
+  }
+  const dir = path.join(process.cwd(), 'public', kind)
+  await fs.mkdir(dir, { recursive: true })
+  await fs.writeFile(path.join(dir, filename), buffer)
+  return `/${kind}/${filename}`
+}
+
+export async function deletePublicUpload(urlOrPath: string | null | undefined): Promise<void> {
+  if (!urlOrPath) return
+  try {
+    if (/^https?:\/\//.test(urlOrPath)) {
+      const { del } = await import('@vercel/blob')
+      await del(urlOrPath, { token: BLOB_TOKEN })
+    } else {
+      await fs.unlink(path.join(process.cwd(), 'public', urlOrPath.replace(/^\//, '')))
+    }
+  } catch {
+    /* best-effort cleanup */
   }
 }
 

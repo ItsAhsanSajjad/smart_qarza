@@ -8,7 +8,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -78,7 +78,6 @@ model Loan {
 
   @@index([userId])
   @@index([status])
-  @@index([hiddenFromDashboardAt])
 }
 
 // ============ INSTALLMENT ============

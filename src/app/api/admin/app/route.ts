@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { promises as fs } from 'fs'
-import path from 'path'
 import { db } from '@/lib/db'
 import { requireAdmin } from '@/lib/session'
+import { writePublicUpload, deletePublicUpload } from '@/lib/uploads'
 
 const MAX_BYTES = 100 * 1024 * 1024 // 100MB
 
@@ -22,9 +21,7 @@ export async function POST(req: NextRequest) {
 
   if (req.nextUrl.searchParams.get('action') === 'remove') {
     const prev = await db.setting.findUnique({ where: { id: 'default' }, select: { apkPath: true } })
-    if (prev?.apkPath?.startsWith('/downloads/')) {
-      try { await fs.unlink(path.join(process.cwd(), 'public', prev.apkPath.replace(/^\//, ''))) } catch {}
-    }
+    await deletePublicUpload(prev?.apkPath)
     await db.setting.update({ where: { id: 'default' }, data: { apkPath: null, apkVersion: null } })
     return NextResponse.json({ ok: true })
   }
@@ -41,21 +38,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'APK must be 100MB or smaller' }, { status: 400 })
   }
 
-  const dir = path.join(process.cwd(), 'public', 'downloads')
-  await fs.mkdir(dir, { recursive: true })
-
   const prev = await db.setting.findUnique({ where: { id: 'default' }, select: { apkPath: true } })
   const filename = `smartqarz-${Date.now()}.apk`
-  await fs.writeFile(path.join(dir, filename), Buffer.from(await file.arrayBuffer()))
-  // remove the previous APK file
-  if (prev?.apkPath?.startsWith('/downloads/')) {
-    try { await fs.unlink(path.join(process.cwd(), 'public', prev.apkPath.replace(/^\//, ''))) } catch {}
-  }
+  const apkPath = await writePublicUpload(
+    'downloads',
+    filename,
+    Buffer.from(await file.arrayBuffer()),
+    'application/vnd.android.package-archive'
+  )
+  // remove the previous APK file (local path or Blob URL)
+  await deletePublicUpload(prev?.apkPath)
 
   const s = await db.setting.upsert({
     where: { id: 'default' },
-    update: { apkPath: `/downloads/${filename}`, apkVersion: version || null },
-    create: { id: 'default', apkPath: `/downloads/${filename}`, apkVersion: version || null },
+    update: { apkPath, apkVersion: version || null },
+    create: { id: 'default', apkPath, apkVersion: version || null },
   })
   return NextResponse.json({ ok: true, apkPath: s.apkPath, apkVersion: s.apkVersion })
 }
