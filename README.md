@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="public/logo.png" alt="GEO Loan.pk" width="220" />
+<img src="public/logo-sq.png" alt="Smart Qarz" width="140" />
 
-# GEO Loan.pk
+# Smart Qarz
 
 **آسان قرض، روشن مستقبل — Easy loans, a brighter future**
 
@@ -20,12 +20,12 @@ A modern, secure digital lending platform with a full admin console — built fo
 
 ## ✨ Overview
 
-GEO Loan.pk is an end-to-end loan management platform with two surfaces:
+Smart Qarz is an end-to-end loan management platform with two surfaces:
 
 - **User app** (`/app`) — register, complete KYC, choose a loan package, submit payment proof, and withdraw.
 - **Admin console** (`/admin`) — review KYC, approve/reject payments, manage loans, settings, and customer videos.
 
-It’s mobile-first, fully branded (green + gold), and localised for Pakistan (PKR, CNIC, EasyPaisa / JazzCash / bank transfers, Urdu tagline).
+It’s mobile-first, professionally branded, and localised for Pakistan (PKR, CNIC, EasyPaisa / JazzCash / bank transfers, Urdu tagline).
 
 ## 🚀 Features
 
@@ -79,7 +79,7 @@ npm run dev                 # http://localhost:3000
 | User app | `http://localhost:3000/app` |
 | Admin console | `http://localhost:3000/admin` |
 
-> Default admin (change after first login): phone `03000000000`, password `admin123`.
+> A default admin account is created by the seed script. **Change its phone and password immediately after the first login** via **Admin → Settings**.
 
 ## ⚙️ Configuration
 
@@ -98,7 +98,7 @@ npm run build      # outputs .next/standalone (+ static assets copied in)
 npm run start
 ```
 
-Runs on a Node VPS, a PaaS (Render/Railway/Fly), or shared cPanel hosting (Node app via Passenger). For production, point `DATABASE_URL` at PostgreSQL and set a real `SESSION_SECRET`.
+Runs on a Node VPS, a PaaS (Render / Railway / Fly.io), or shared cPanel hosting (Node app via Passenger). For production, point `DATABASE_URL` at PostgreSQL and set a real `SESSION_SECRET`.
 
 ## 📁 Project Structure
 

@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
   await fs.mkdir(dir, { recursive: true })
 
   const prev = await db.setting.findUnique({ where: { id: 'default' }, select: { apkPath: true } })
-  const filename = `geoloan-${Date.now()}.apk`
+  const filename = `smartqarz-${Date.now()}.apk`
   await fs.writeFile(path.join(dir, filename), Buffer.from(await file.arrayBuffer()))
   // remove the previous APK file
   if (prev?.apkPath?.startsWith('/downloads/')) {

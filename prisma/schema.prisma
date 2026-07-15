@@ -1,4 +1,4 @@
-// GEO Loan - Loan Web Application Schema
+// Smart Qarz - Loan Web Application Schema
 generator client {
   provider = "prisma-client-js"
   // "native" = this dev machine. The rhel targets cover Namecheap shared hosting
@@ -39,6 +39,9 @@ model User {
   // timestamps
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  hiddenFromDashboardAt DateTime?
+  hiddenFromDashboardBy String?
+  hiddenFromDashboardReason String?
 
   loans        Loan[]
   payments     Payment[]
@@ -47,6 +50,7 @@ model User {
   kycSubmissions KycSubmission[]
 
   @@index([role])
+  @@index([hiddenFromDashboardAt])
 }
 
 // ============ LOAN ============
@@ -74,6 +78,7 @@ model Loan {
 
   @@index([userId])
   @@index([status])
+  @@index([hiddenFromDashboardAt])
 }
 
 // ============ INSTALLMENT ============
@@ -131,6 +136,9 @@ model KycSubmission {
   reviewedBy String?
   reviewedAt DateTime?
   createdAt  DateTime @default(now())
+  hiddenFromDashboardAt DateTime?
+  hiddenFromDashboardBy String?
+  hiddenFromDashboardReason String?
 
   @@index([userId])
   @@index([status])
@@ -176,7 +184,7 @@ model Notification {
 model Setting {
   id        String   @id @default("default")
   bankName         String  @default("HBL - Habib Bank Ltd")
-  accountTitle     String  @default("GEO Loan (Pvt) Ltd")
+  accountTitle     String  @default("Smart Qarz (Pvt) Ltd")
   accountNumber    String  @default("1234-5678-9012-3456")
   mobileAccount    String  @default("0300-1234567")
   markupPercent    Float   @default(5)
@@ -210,6 +218,37 @@ model AuditLog {
   @@index([action])
 }
 
+// ============ FINANCIAL LEDGER (immutable snapshots for super-admin checks) ============
+model FinancialLedger {
+  id          String   @id @default(cuid())
+  entryKey    String   @unique
+  direction   String   // INCOME | EXPENSE
+  type        String   // PAYMENT_APPROVED | WITHDRAWAL_PAID
+  amount      Float
+  sourceId    String?
+  sourceType  String
+  userId      String?
+  userPhone   String?
+  userName    String?
+  userCnic    String?
+  userEmail   String?
+  loanId      String?
+  paymentType String?
+  method      String?
+  status      String
+  adminId     String?
+  adminPhone  String?
+  note        String?
+  metadata    String?
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([direction])
+  @@index([type])
+  @@index([userPhone])
+  @@index([sourceId])
+}
+
 // ============ REEL (customer testimonial videos for the landing page) ============
 model Reel {
   id         String   @id @default(cuid())
@@ -218,6 +257,10 @@ model Reel {
   videoPath  String                 // public path, e.g. /reels/<file>.mp4
   order      Int      @default(0)
   createdAt  DateTime @default(now())
+  hiddenFromDashboardAt DateTime?
+  hiddenFromDashboardBy String?
+  hiddenFromDashboardReason String?
 
   @@index([order])
+  @@index([hiddenFromDashboardAt])
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { requireAdmin } from '@/lib/session'
+import { recordPaidWithdrawalInLedger } from '@/lib/financial-ledger'
 
 // POST /api/admin/withdrawals/[id]/pay
 // Body: { transactionId } — admin has sent the money and records the bank/wallet Transaction ID
@@ -15,13 +16,17 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     return NextResponse.json({ error: 'Enter the Transaction ID (min 4 characters)' }, { status: 400 })
   }
 
-  const w = await db.withdrawal.findUnique({ where: { id } })
+  const w = await db.withdrawal.findUnique({
+    where: { id },
+    include: { user: { select: { id: true, phone: true, fullName: true, cnic: true, email: true } } },
+  })
   if (!w) return NextResponse.json({ error: 'Withdrawal not found' }, { status: 404 })
   if (w.status !== 'PENDING') {
     return NextResponse.json({ error: 'This request has already been processed' }, { status: 400 })
   }
 
   const dest = w.method === 'bank' ? (w.bank || 'bank') : w.method === 'easypaisa' ? 'EasyPaisa' : 'JazzCash'
+  const reviewedAt = new Date()
 
   try {
     await db.$transaction(async (tx) => {
@@ -29,9 +34,14 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       // double-click / double-pay / pay-racing-reject from paying the user twice.
       const res = await tx.withdrawal.updateMany({
         where: { id, status: 'PENDING' },
-        data: { status: 'PAID', transactionId: txn, reviewedBy: admin.id, reviewedAt: new Date() },
+        data: { status: 'PAID', transactionId: txn, reviewedBy: admin.id, reviewedAt },
       })
       if (res.count !== 1) throw new Error('ALREADY_PROCESSED')
+      await recordPaidWithdrawalInLedger(
+        tx,
+        { ...w, status: 'PAID', transactionId: txn, reviewedBy: admin.id, reviewedAt },
+        admin,
+      )
 
       if (w.loanId) {
         await tx.loan.update({ where: { id: w.loanId }, data: { status: 'WITHDRAWN' } }).catch(() => {})

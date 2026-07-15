@@ -6,7 +6,7 @@ import {
   Loader2, LogOut, LayoutDashboard, Users, FileCheck, Wallet,
   Settings as SettingsIcon, Bell, Search, ShieldCheck, ChevronRight,
   Check, X, Eye, EyeOff, Phone, Lock, ArrowLeft, RefreshCw, Banknote,
-  Landmark, Coins, KeyRound, Menu, Video, Trash2, UploadCloud,
+  Landmark, Coins, KeyRound, Menu, Video, Trash2, UploadCloud, MessageCircle,
 } from 'lucide-react'
 import { BrandLogo, TAGLINE_UR, TAGLINE_EN } from '@/components/brand/logo'
 import { normalizePhone, PHONE_LENGTH } from '@/lib/validation'
@@ -74,7 +74,19 @@ interface SettingsData {
   loanPackages: string
   adminPhone: string
   adminPassword: string
+  chatEnabled?: boolean
 }
+
+type PageMeta = {
+  page: number
+  pageSize: number
+  total: number
+  pages: number
+}
+
+const DEFAULT_PAGE_SIZE = 20
+
+const emptyPageMeta: PageMeta = { page: 1, pageSize: DEFAULT_PAGE_SIZE, total: 0, pages: 1 }
 
 interface WithdrawalRow {
   id: string
@@ -126,8 +138,8 @@ export default function AdminPanel() {
           <div className="w-12 h-12 mx-auto rounded-2xl bg-red-50 border border-red-200 grid place-items-center">
             <ShieldCheck className="w-6 h-6 text-red-600" />
           </div>
-          <h2 className="font-bold text-xl mt-4 text-slate-900">Access Denied</h2>
-          <p className="text-sm text-slate-600 mt-1.5">This account does not have admin privileges.</p>
+          <h2 className="font-bold text-xl mt-4 text-foreground">Access Denied</h2>
+          <p className="text-sm text-muted-foreground mt-1.5">This account does not have admin privileges.</p>
           <a href="/app" className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
             Go to user app <ChevronRight className="w-4 h-4" />
           </a>
@@ -175,16 +187,16 @@ function AdminLogin({ onLogin }: { onLogin: () => Promise<any> }) {
         <div className="flex flex-col items-center text-center">
           <BrandLogo height={52} />
           <div className="geo-rule-gold w-16 mt-5" />
-          <h1 className="text-2xl font-bold mt-4 text-slate-900">Management Console</h1>
+          <h1 className="text-2xl font-bold mt-4 text-foreground">Management Console</h1>
           <p className="font-urdu text-sm text-muted-foreground mt-1.5" dir="rtl">{TAGLINE_UR}</p>
           <p className="text-xs text-muted-foreground/80 mt-0.5">{TAGLINE_EN}</p>
         </div>
 
         <div className="mt-7 space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">Admin Phone</label>
+            <label className="block text-xs font-semibold text-foreground mb-1.5">Admin Phone</label>
             <div className="relative">
-              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
                 value={phone}
                 onChange={(e) => setPhone(normalizePhone(e.target.value))}
@@ -197,9 +209,9 @@ function AdminLogin({ onLogin }: { onLogin: () => Promise<any> }) {
             </div>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">Password</label>
+            <label className="block text-xs font-semibold text-foreground mb-1.5">Password</label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
                 type={showPw ? 'text' : 'password'}
                 value={password}
@@ -212,7 +224,7 @@ function AdminLogin({ onLogin }: { onLogin: () => Promise<any> }) {
                 type="button"
                 onClick={() => setShowPw((v) => !v)}
                 aria-label={showPw ? 'Hide password' : 'Show password'}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground transition"
               >
                 {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
@@ -275,7 +287,7 @@ function AdminShell({ admin, tab, setTab, refresh }: {
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
                 tab === n.id
                   ? 'geo-gradient text-white shadow-sm'
-                  : 'text-slate-600 hover:bg-muted hover:text-slate-900'
+                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
               }`}
             >
               <n.icon className="w-4 h-4" /> {n.label}
@@ -287,10 +299,10 @@ function AdminShell({ admin, tab, setTab, refresh }: {
         </nav>
         <div className="p-4 border-t border-border">
           <div className="text-[11px] uppercase tracking-wide text-muted-foreground mb-1.5">Signed in as</div>
-          <div className="text-sm font-semibold text-slate-900">{admin.fullName || admin.phone}</div>
+          <div className="text-sm font-semibold text-foreground">{admin.fullName || admin.phone}</div>
           <button
             onClick={async () => { await fetch('/api/auth/logout', { method: 'POST' }); window.location.href = '/admin' }}
-            className="mt-3 w-full px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-red-50 inline-flex items-center gap-1.5 transition"
+            className="mt-3 w-full px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground hover:text-red-600 hover:bg-red-50 inline-flex items-center gap-1.5 transition"
           >
             <LogOut className="w-3.5 h-3.5" /> Logout
           </button>
@@ -300,13 +312,13 @@ function AdminShell({ admin, tab, setTab, refresh }: {
       {/* Mobile top bar */}
       <div className="flex-1 flex flex-col min-w-0">
         <header className="md:hidden bg-card border-b border-border p-3 flex items-center justify-between">
-          <button onClick={() => setSidebarOpen(true)} className="p-1.5 rounded-lg text-slate-700 hover:bg-muted">
+          <button onClick={() => setSidebarOpen(true)} className="p-1.5 rounded-lg text-foreground hover:bg-muted">
             <Menu className="w-5 h-5" />
           </button>
           <BrandLogo height={28} />
           <button
             onClick={async () => { await fetch('/api/auth/logout', { method: 'POST' }); window.location.href = '/admin' }}
-            className="p-1.5 rounded-lg text-slate-600 hover:text-red-600 hover:bg-red-50"
+            className="p-1.5 rounded-lg text-muted-foreground hover:text-red-600 hover:bg-red-50"
           >
             <LogOut className="w-4 h-4" />
           </button>
@@ -323,7 +335,7 @@ function AdminShell({ admin, tab, setTab, refresh }: {
                     Management Console
                   </div>
                 </div>
-                <button onClick={() => setSidebarOpen(false)} className="p-1.5 rounded-lg text-slate-500 hover:bg-muted">
+                <button onClick={() => setSidebarOpen(false)} className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted">
                   <X className="w-4 h-4" />
                 </button>
               </div>
@@ -334,7 +346,7 @@ function AdminShell({ admin, tab, setTab, refresh }: {
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium mb-1 transition ${
                     tab === n.id
                       ? 'geo-gradient text-white shadow-sm'
-                      : 'text-slate-600 hover:bg-muted hover:text-slate-900'
+                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                   }`}
                 >
                   <n.icon className="w-4 h-4" /> {n.label}
@@ -535,13 +547,13 @@ function WithdrawalsTab() {
             key={f.id}
             onClick={() => setFilter(f.id as 'PENDING' | 'PAID' | 'REJECTED' | '')}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition ${
-              filter === f.id ? `${f.color} text-white shadow-sm` : 'bg-card border border-border text-slate-600 hover:bg-muted'
+              filter === f.id ? `${f.color} text-white shadow-sm` : 'bg-card border border-border text-muted-foreground hover:bg-muted'
             }`}
           >
             {f.label}
           </button>
         ))}
-        <button onClick={() => load()} className="ml-auto px-3.5 py-1.5 rounded-lg text-xs font-medium bg-card border border-border text-slate-600 inline-flex items-center gap-1.5 hover:bg-muted transition">
+        <button onClick={() => load()} className="ml-auto px-3.5 py-1.5 rounded-lg text-xs font-medium bg-card border border-border text-muted-foreground inline-flex items-center gap-1.5 hover:bg-muted transition">
           <RefreshCw className="w-3 h-3" /> Refresh
         </button>
       </div>
@@ -558,10 +570,10 @@ function WithdrawalsTab() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${wColor(w.status)}`}>{w.status}</span>
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-muted text-slate-600 border border-border">{methodLabel(w)}</span>
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">{methodLabel(w)}</span>
                   </div>
-                  <div className="font-bold text-xl mt-2 text-slate-900">PKR {Math.round(w.amount).toLocaleString()}</div>
-                  <div className="text-xs text-slate-600 mt-1.5">
+                  <div className="font-bold text-xl mt-2 text-foreground">PKR {Math.round(w.amount).toLocaleString()}</div>
+                  <div className="text-xs text-muted-foreground mt-1.5">
                     <span className="font-semibold">User:</span> {w.user.fullName || w.user.phone}
                     <span className="ml-2 text-muted-foreground">Phone: {w.user.phone}</span>
                     {w.user.cnic && <span className="ml-2 text-muted-foreground">CNIC: {w.user.cnic}</span>}
@@ -571,16 +583,16 @@ function WithdrawalsTab() {
                   <div className="mt-3 rounded-xl border border-border bg-muted/40 p-3 text-xs space-y-1.5">
                     <div className="flex items-center gap-2">
                       <span className="text-muted-foreground w-24 shrink-0">Send to</span>
-                      <span className="font-semibold text-slate-900">{methodLabel(w)}</span>
+                      <span className="font-semibold text-foreground">{methodLabel(w)}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-muted-foreground w-24 shrink-0">Account #</span>
-                      <span className="font-semibold text-slate-900 break-all">{w.accountNumber}</span>
+                      <span className="font-semibold text-foreground break-all">{w.accountNumber}</span>
                       <button onClick={() => copy(w.accountNumber)} className="text-primary hover:underline shrink-0">copy</button>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-muted-foreground w-24 shrink-0">Account title</span>
-                      <span className="font-semibold text-slate-900">{w.accountTitle}</span>
+                      <span className="font-semibold text-foreground">{w.accountTitle}</span>
                       <button onClick={() => copy(w.accountTitle)} className="text-primary hover:underline shrink-0">copy</button>
                     </div>
                   </div>
@@ -602,7 +614,7 @@ function WithdrawalsTab() {
 
                 {w.status === 'PENDING' && (
                   <div className="shrink-0 md:w-72 space-y-2">
-                    <label className="block text-xs font-semibold text-slate-700">Transaction ID (after sending money)</label>
+                    <label className="block text-xs font-semibold text-foreground">Transaction ID (after sending money)</label>
                     <input
                       value={txn[w.id] || ''}
                       onChange={(e) => setTxn((s) => ({ ...s, [w.id]: e.target.value }))}
@@ -629,13 +641,13 @@ function WithdrawalsTab() {
 
               {w.status === 'PENDING' && rejectId === w.id && (
                 <div className="mt-3 rounded-xl border border-red-200 bg-red-50/50 p-3">
-                  <div className="text-xs font-semibold text-slate-700 mb-1.5">Reason for rejection — select one or more (sent to the user; balance is refunded)</div>
+                  <div className="text-xs font-semibold text-foreground mb-1.5">Reason for rejection — select one or more (sent to the user; balance is refunded)</div>
                   <div className="flex flex-wrap gap-1.5 mb-2">
                     {W_REASONS.map((q) => {
                       const on = reasons.includes(q)
                       return (
                         <button key={q} onClick={() => toggleReason(q)}
-                          className={`text-[10px] px-2 py-0.5 rounded-full border inline-flex items-center gap-1 transition ${on ? 'bg-red-600 text-white border-red-600' : 'bg-card border-border text-slate-600 hover:border-primary'}`}>
+                          className={`text-[10px] px-2 py-0.5 rounded-full border inline-flex items-center gap-1 transition ${on ? 'bg-red-600 text-white border-red-600' : 'bg-card border-border text-muted-foreground hover:border-primary'}`}>
                           {on && <Check className="w-2.5 h-2.5" />}{q}
                         </button>
                       )
@@ -648,7 +660,7 @@ function WithdrawalsTab() {
                       className="px-3.5 py-2 rounded-lg bg-red-600 text-white text-xs font-semibold hover:bg-red-700 disabled:opacity-60 inline-flex items-center gap-1.5 transition">
                       {busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <X className="w-3.5 h-3.5" />} Confirm Reject &amp; Refund
                     </button>
-                    <button onClick={() => { setRejectId(null); setReasons([]); setExtra('') }} className="px-3.5 py-2 rounded-lg bg-card border border-border text-slate-600 text-xs font-semibold hover:bg-muted transition">Cancel</button>
+                    <button onClick={() => { setRejectId(null); setReasons([]); setExtra('') }} className="px-3.5 py-2 rounded-lg bg-card border border-border text-muted-foreground text-xs font-semibold hover:bg-muted transition">Cancel</button>
                   </div>
                 </div>
               )}
@@ -700,15 +712,15 @@ function DashboardTab() {
             <div className={`w-10 h-10 rounded-xl ${c.tint} grid place-items-center mb-4`}>
               <c.icon className="w-5 h-5" />
             </div>
-            <div className="text-2xl font-bold text-slate-900 tracking-tight">{c.value}</div>
+            <div className="text-2xl font-bold text-foreground tracking-tight">{c.value}</div>
             <div className="text-xs text-muted-foreground mt-1">{c.label}</div>
           </div>
         ))}
       </div>
 
       <div className="mt-6 geo-card p-6">
-        <h3 className="font-bold text-sm text-slate-900 mb-4">How the approval flow works</h3>
-        <ol className="text-sm text-slate-600 space-y-2.5 list-decimal pl-4 marker:text-primary marker:font-semibold">
+        <h3 className="font-bold text-sm text-foreground mb-4">How the approval flow works</h3>
+        <ol className="text-sm text-muted-foreground space-y-2.5 list-decimal pl-4 marker:text-primary marker:font-semibold">
           <li>User registers &amp; submits KYC (you can review in Users tab — auto-approved in this demo)</li>
           <li>User selects loan package → amount credited to wallet → user attempts to withdraw</li>
           <li>System requires 12% down payment → user uploads screenshot → appears in Payments tab as PENDING</li>
@@ -737,6 +749,7 @@ interface KycRow {
   kycStatus: string
   kycNote: string | null
   kycSubmittedAt: string | null
+  reviewedAt: string | null
   createdAt: string
 }
 
@@ -744,7 +757,7 @@ function KycDetail({ label, value }: { label: string; value: string | null }) {
   return (
     <div>
       <span className="text-muted-foreground">{label}: </span>
-      <span className="font-medium text-slate-800">{value || '—'}</span>
+      <span className="font-medium text-foreground">{value || '—'}</span>
     </div>
   )
 }
@@ -758,6 +771,10 @@ type KycSubmissionRow = {
 
 function KycTab() {
   const [filter, setFilter] = useState<'SUBMITTED' | 'APPROVED' | 'REJECTED' | 'ALL' | 'HISTORY'>('SUBMITTED')
+  const [q, setQ] = useState('')
+  const [debouncedQ, setDebouncedQ] = useState('')
+  const [page, setPage] = useState(1)
+  const [pageMeta, setPageMeta] = useState<PageMeta>(emptyPageMeta)
   const [rows, setRows] = useState<KycRow[]>([])
   const [history, setHistory] = useState<KycSubmissionRow[]>([])
   const [loading, setLoading] = useState(true)
@@ -767,25 +784,47 @@ function KycTab() {
   const [extra, setExtra] = useState('')
   const [actionLoading, setActionLoading] = useState<string | null>(null)
 
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedQ(q.trim()), 250)
+    return () => clearTimeout(t)
+  }, [q])
+
+  useEffect(() => { setPage(1) }, [filter, debouncedQ])
+
   const toggleReason = (q: string) => setReasons((rs) => (rs.includes(q) ? rs.filter((x) => x !== q) : [...rs, q]))
   const buildNote = () => [reasons.join('; '), extra.trim()].filter(Boolean).join(' — ')
 
   const load = useCallback((silent = false) => {
     if (!silent) setLoading(true)
+    const params = new URLSearchParams()
+    params.set('page', String(page))
+    params.set('pageSize', String(DEFAULT_PAGE_SIZE))
+    if (debouncedQ) params.set('q', debouncedQ)
     if (filter === 'HISTORY') {
-      fetch('/api/admin/kyc/history', { cache: 'no-store' })
+      fetch(`/api/admin/kyc/history?${params.toString()}`, { cache: 'no-store' })
         .then((r) => r.json())
-        .then((d) => setHistory(d.submissions || []))
+        .then((d) => {
+          setHistory(d.submissions || [])
+          const nextMeta = { page: d.page || 1, pageSize: d.pageSize || DEFAULT_PAGE_SIZE, total: d.total || 0, pages: d.pages || 1 }
+          setPageMeta(nextMeta)
+          if (nextMeta.page !== page) setPage(nextMeta.page)
+        })
         .catch(() => {})
         .finally(() => { if (!silent) setLoading(false) })
     } else {
-      fetch(`/api/admin/kyc?status=${filter}`, { cache: 'no-store' })
+      params.set('status', filter)
+      fetch(`/api/admin/kyc?${params.toString()}`, { cache: 'no-store' })
         .then((r) => r.json())
-        .then((d) => setRows(d.submissions || []))
+        .then((d) => {
+          setRows(d.submissions || [])
+          const nextMeta = { page: d.page || 1, pageSize: d.pageSize || DEFAULT_PAGE_SIZE, total: d.total || 0, pages: d.pages || 1 }
+          setPageMeta(nextMeta)
+          if (nextMeta.page !== page) setPage(nextMeta.page)
+        })
         .catch(() => {})
         .finally(() => { if (!silent) setLoading(false) })
     }
-  }, [filter])
+  }, [filter, debouncedQ, page])
 
   useEffect(() => { load() }, [load])
   // Auto-refresh: new submissions + status changes appear without a manual refresh
@@ -828,11 +867,29 @@ function KycTab() {
     } catch { toast.error('Could not delete') }
   }
 
+  const resetKyc = async (id: string, name: string) => {
+    if (!window.confirm(`Ask ${name} to submit KYC documents again? Their current approval will be removed.`)) return
+    setActionLoading(id + 'reset')
+    try {
+      const r = await fetch(`/api/admin/kyc/${id}/reset`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ note: 'Your documents need to be submitted again. Please upload clear, correct CNIC photos and a selfie.' }),
+      })
+      const d = await r.json().catch(() => ({}))
+      if (r.ok) { toast.success('KYC reset. User can submit documents again.'); load() } else toast.error(d.error || 'Could not reset KYC')
+    } catch {
+      toast.error('Could not reset KYC')
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
   const QUICK = ['Blurry / unclear photo', 'CNIC number does not match', 'Wrong document uploaded', 'Selfie does not match CNIC', 'Details incomplete']
 
   return (
     <div>
-      <PageTitle icon={ShieldCheck} title="KYC Review" subtitle="Verify identity documents — approve, or reject with feedback" />
+      <PageTitle icon={ShieldCheck} title="KYC Review" subtitle="Verify identity documents, request resubmission, or remove wrong accounts" />
 
       <div className="mt-5 flex flex-wrap gap-2">
         {[
@@ -843,22 +900,47 @@ function KycTab() {
           { id: 'HISTORY', label: 'All Cases (History)', color: 'bg-slate-700' },
         ].map((f) => (
           <button key={f.id} onClick={() => setFilter(f.id as any)}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition ${filter === f.id ? `${f.color} text-white shadow-sm` : 'bg-card border border-border text-slate-600 hover:bg-muted'}`}>
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition ${filter === f.id ? `${f.color} text-white shadow-sm` : 'bg-card border border-border text-muted-foreground hover:bg-muted'}`}>
             {f.label}
           </button>
         ))}
-        <button onClick={() => load()} className="ml-auto px-3.5 py-1.5 rounded-lg text-xs font-medium bg-card border border-border text-slate-600 inline-flex items-center gap-1.5 hover:bg-muted transition">
+        <button onClick={() => load()} className="ml-auto px-3.5 py-1.5 rounded-lg text-xs font-medium bg-card border border-border text-muted-foreground inline-flex items-center gap-1.5 hover:bg-muted cursor-pointer transition">
           <RefreshCw className="w-3 h-3" /> Refresh
         </button>
       </div>
 
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative w-full max-w-xl">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search name, phone, CNIC, email, DOB, address, status..."
+            aria-label="Search KYC cases"
+            className="w-full pl-10 pr-9 py-2.5 rounded-xl border border-border bg-card text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition"
+          />
+          {q && (
+            <button
+              onClick={() => setQ('')}
+              aria-label="Clear KYC search"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer transition"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+        <div className="text-xs text-muted-foreground">
+          {pageMeta.total.toLocaleString()} total case{pageMeta.total === 1 ? '' : 's'}
+        </div>
+      </div>
+
       {loading ? <Loading /> : filter === 'HISTORY' ? (
-        history.length === 0 ? <EmptyState icon={ShieldCheck} text="No KYC cases yet" /> : (
+        history.length === 0 ? <EmptyState icon={ShieldCheck} text={debouncedQ ? "No KYC cases match your search" : "No KYC cases yet"} /> : (
           <div className="mt-5 grid gap-3">
             {history.map((h) => (
               <div key={h.id} className="geo-card p-4">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-bold text-slate-900">{h.fullName || '—'}</span>
+                  <span className="font-bold text-foreground">{h.fullName || '—'}</span>
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${kycColor(h.status)}`}>{h.status}</span>
                   <span className="text-xs text-muted-foreground">
                     {h.phone} · submitted {new Date(h.createdAt).toLocaleString('en-PK', { dateStyle: 'short', timeStyle: 'short' })}
@@ -890,9 +972,10 @@ function KycTab() {
                 </div>
               </div>
             ))}
+            <PaginationControls meta={pageMeta} onPage={setPage} />
           </div>
         )
-      ) : rows.length === 0 ? <EmptyState icon={ShieldCheck} text="No KYC submissions" /> : (
+      ) : rows.length === 0 ? <EmptyState icon={ShieldCheck} text={debouncedQ ? "No KYC submissions match your search" : "No KYC submissions"} /> : (
         <div className="mt-5 grid gap-4">
           {rows.map((u) => {
             const docs = [
@@ -903,15 +986,24 @@ function KycTab() {
             return (
               <div key={u.id} className="geo-card p-4">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-bold text-slate-900">{u.fullName || '—'}</span>
+                  <span className="font-bold text-foreground">{u.fullName || '—'}</span>
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${kycColor(u.kycStatus)}`}>{u.kycStatus}</span>
                   <span className="text-xs text-muted-foreground">
                     {u.phone}{u.kycSubmittedAt ? ` · submitted ${new Date(u.kycSubmittedAt).toLocaleString('en-PK', { dateStyle: 'short', timeStyle: 'short' })}` : ''}
+                    {u.reviewedAt ? ` · reviewed ${new Date(u.reviewedAt).toLocaleString('en-PK', { dateStyle: 'short', timeStyle: 'short' })}` : ''}
                   </span>
-                  <button onClick={() => delUser(u.id, u.fullName || u.phone)} title="Delete user & KYC"
-                    className="ml-auto text-xs text-red-600 inline-flex items-center gap-1 hover:underline shrink-0">
-                    <Trash2 className="w-3.5 h-3.5" /> Delete
-                  </button>
+                  <div className="ml-auto flex items-center gap-2 shrink-0">
+                    {u.kycStatus !== 'SUBMITTED' && (
+                      <button onClick={() => resetKyc(u.id, u.fullName || u.phone)} disabled={actionLoading === u.id + 'reset'} title="Ask user to submit KYC again"
+                        className="text-xs text-amber-700 inline-flex items-center gap-1 hover:underline disabled:opacity-60">
+                        {actionLoading === u.id + 'reset' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />} Resubmit
+                      </button>
+                    )}
+                    <button onClick={() => delUser(u.id, u.fullName || u.phone)} title="Delete user & KYC"
+                      className="text-xs text-red-600 inline-flex items-center gap-1 hover:underline">
+                      <Trash2 className="w-3.5 h-3.5" /> Delete
+                    </button>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-2 mt-3">
@@ -945,13 +1037,13 @@ function KycTab() {
                 {u.kycStatus === 'SUBMITTED' && (
                   rejectId === u.id ? (
                     <div className="mt-3 rounded-xl border border-red-200 bg-red-50/50 p-3">
-                      <div className="text-xs font-semibold text-slate-700 mb-1.5">Reason for rejection — select one or more (sent to the user)</div>
+                      <div className="text-xs font-semibold text-foreground mb-1.5">Reason for rejection — select one or more (sent to the user)</div>
                       <div className="flex flex-wrap gap-1.5 mb-2">
                         {QUICK.map((q) => {
                           const on = reasons.includes(q)
                           return (
                             <button key={q} onClick={() => toggleReason(q)}
-                              className={`text-[10px] px-2 py-0.5 rounded-full border inline-flex items-center gap-1 transition ${on ? 'bg-red-600 text-white border-red-600' : 'bg-card border-border text-slate-600 hover:border-primary'}`}>
+                              className={`text-[10px] px-2 py-0.5 rounded-full border inline-flex items-center gap-1 transition ${on ? 'bg-red-600 text-white border-red-600' : 'bg-card border-border text-muted-foreground hover:border-primary'}`}>
                               {on && <Check className="w-2.5 h-2.5" />}{q}
                             </button>
                           )
@@ -960,14 +1052,14 @@ function KycTab() {
                       <textarea value={extra} onChange={(e) => setExtra(e.target.value)} rows={2} placeholder="Add any extra details (optional)…"
                         className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition" />
                       {(reasons.length > 0 || extra.trim()) && (
-                        <div className="mt-2 text-[11px] text-slate-500">User will see: <span className="text-slate-700">{buildNote()}</span></div>
+                        <div className="mt-2 text-[11px] text-muted-foreground">User will see: <span className="text-foreground">{buildNote()}</span></div>
                       )}
                       <div className="flex gap-2 mt-2">
                         <button onClick={() => act(u.id, 'reject', buildNote())} disabled={(reasons.length === 0 && !extra.trim()) || actionLoading === u.id + 'reject'}
                           className="px-3.5 py-2 rounded-lg bg-red-600 text-white text-xs font-semibold hover:bg-red-700 disabled:opacity-60 inline-flex items-center gap-1.5 transition">
                           {actionLoading === u.id + 'reject' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <X className="w-3.5 h-3.5" />} Confirm Reject
                         </button>
-                        <button onClick={() => { setRejectId(null); setReasons([]); setExtra('') }} className="px-3.5 py-2 rounded-lg bg-card border border-border text-slate-600 text-xs font-semibold hover:bg-muted transition">Cancel</button>
+                        <button onClick={() => { setRejectId(null); setReasons([]); setExtra('') }} className="px-3.5 py-2 rounded-lg bg-card border border-border text-muted-foreground text-xs font-semibold hover:bg-muted transition">Cancel</button>
                       </div>
                     </div>
                   ) : (
@@ -986,6 +1078,7 @@ function KycTab() {
               </div>
             )
           })}
+          <PaginationControls meta={pageMeta} onPage={setPage} />
         </div>
       )}
 
@@ -993,8 +1086,8 @@ function KycTab() {
         <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm grid place-items-center p-4" onClick={() => setLightbox(null)}>
           <div className="max-w-3xl w-full bg-card rounded-2xl overflow-hidden shadow-sm" onClick={(e) => e.stopPropagation()}>
             <div className="p-4 border-b border-border flex items-center justify-between">
-              <div className="font-bold text-sm text-slate-900">{lightbox.label}</div>
-              <button onClick={() => setLightbox(null)} className="p-1.5 rounded-lg text-slate-500 hover:bg-muted hover:text-slate-900 transition"><X className="w-4 h-4" /></button>
+              <div className="font-bold text-sm text-foreground">{lightbox.label}</div>
+              <button onClick={() => setLightbox(null)} className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition"><X className="w-4 h-4" /></button>
             </div>
             <img src={lightbox.src} alt={lightbox.label} className="w-full max-h-[75vh] object-contain bg-muted" />
           </div>
@@ -1006,6 +1099,10 @@ function KycTab() {
 
 function PaymentsTab() {
   const [filter, setFilter] = useState<'PENDING' | 'APPROVED' | 'REJECTED' | ''>('PENDING')
+  const [q, setQ] = useState('')
+  const [debouncedQ, setDebouncedQ] = useState('')
+  const [page, setPage] = useState(1)
+  const [pageMeta, setPageMeta] = useState<PageMeta>(emptyPageMeta)
   const [payments, setPayments] = useState<PaymentRow[]>([])
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState<PaymentRow | null>(null)
@@ -1022,15 +1119,32 @@ function PaymentsTab() {
   ]
   const openReject = (id: string) => { setSelected(null); setRejectId(id); setReasons([]); setExtra('') }
 
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedQ(q.trim()), 250)
+    return () => clearTimeout(t)
+  }, [q])
+
+  useEffect(() => { setPage(1) }, [filter, debouncedQ])
+
   const load = useCallback((silent = false) => {
     if (!silent) setLoading(true)
-    const url = filter ? `/api/admin/payments?status=${filter}` : '/api/admin/payments'
+    const params = new URLSearchParams()
+    if (filter) params.set('status', filter)
+    if (debouncedQ) params.set('q', debouncedQ)
+    params.set('page', String(page))
+    params.set('pageSize', String(DEFAULT_PAGE_SIZE))
+    const url = `/api/admin/payments${params.toString() ? `?${params.toString()}` : ''}`
     fetch(url, { cache: 'no-store' })
       .then((r) => r.json())
-      .then((d) => setPayments(d.payments || []))
+      .then((d) => {
+        setPayments(d.payments || [])
+        const nextMeta = { page: d.page || 1, pageSize: d.pageSize || DEFAULT_PAGE_SIZE, total: d.total || 0, pages: d.pages || 1 }
+        setPageMeta(nextMeta)
+        if (nextMeta.page !== page) setPage(nextMeta.page)
+      })
       .catch(() => {})
       .finally(() => { if (!silent) setLoading(false) })
-  }, [filter])
+  }, [filter, debouncedQ, page])
 
   useEffect(() => { load() }, [load])
   // Auto-refresh: new payments + status changes appear without a manual refresh
@@ -1072,7 +1186,7 @@ function PaymentsTab() {
             key={f.id}
             onClick={() => setFilter(f.id as any)}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition ${
-              filter === f.id ? `${f.color} text-white shadow-sm` : 'bg-card border border-border text-slate-600 hover:bg-muted'
+              filter === f.id ? `${f.color} text-white shadow-sm` : 'bg-card border border-border text-muted-foreground hover:bg-muted'
             }`}
           >
             {f.label}
@@ -1080,16 +1194,41 @@ function PaymentsTab() {
         ))}
         <button
           onClick={() => load()}
-          className="ml-auto px-3.5 py-1.5 rounded-lg text-xs font-medium bg-card border border-border text-slate-600 inline-flex items-center gap-1.5 hover:bg-muted transition"
+          className="ml-auto px-3.5 py-1.5 rounded-lg text-xs font-medium bg-card border border-border text-muted-foreground inline-flex items-center gap-1.5 hover:bg-muted transition"
         >
           <RefreshCw className="w-3 h-3" /> Refresh
         </button>
       </div>
 
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative w-full max-w-xl">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search name, phone, CNIC, amount, status..."
+            aria-label="Search payments"
+            className="w-full pl-10 pr-9 py-2.5 rounded-xl border border-border bg-card text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition"
+          />
+          {q && (
+            <button
+              onClick={() => setQ('')}
+              aria-label="Clear payment search"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer transition"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+        <div className="text-xs text-muted-foreground">
+          {pageMeta.total.toLocaleString()} total payment{pageMeta.total === 1 ? '' : 's'}
+        </div>
+      </div>
+
       {loading ? (
         <Loading />
       ) : payments.length === 0 ? (
-        <EmptyState icon={FileCheck} text="No payments found" />
+        <EmptyState icon={FileCheck} text={debouncedQ ? "No payments match your search" : "No payments found"} />
       ) : (
         <div className="mt-5 grid gap-4">
           {payments.map((p) => (
@@ -1111,12 +1250,12 @@ function PaymentsTab() {
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${statusColor(p.status)}`}>
                     {p.status}
                   </span>
-                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-muted text-slate-600 border border-border">
+                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
                     {p.type === 'DOWN_PAYMENT' ? 'Down Payment' : p.type === 'INSTALLMENT' ? 'Installment' : p.type}
                   </span>
                 </div>
-                <div className="font-bold text-lg mt-2 text-slate-900">PKR {Math.round(p.amount).toLocaleString()}</div>
-                <div className="text-xs text-slate-600 mt-1.5">
+                <div className="font-bold text-lg mt-2 text-foreground">PKR {Math.round(p.amount).toLocaleString()}</div>
+                <div className="text-xs text-muted-foreground mt-1.5">
                   <span className="font-semibold">User:</span> {p.user.fullName || p.user.phone}
                   {p.user.cnic && <span className="ml-2 text-muted-foreground">CNIC: {p.user.cnic}</span>}
                 </div>
@@ -1124,7 +1263,7 @@ function PaymentsTab() {
                   Phone: {p.user.phone} · Submitted: {new Date(p.createdAt).toLocaleString('en-PK', { dateStyle: 'short', timeStyle: 'short' })}
                 </div>
                 {p.adminNote && (
-                  <div className="text-xs text-slate-700 mt-1.5">Admin note: <em>{p.adminNote}</em></div>
+                  <div className="text-xs text-foreground mt-1.5">Admin note: <em>{p.adminNote}</em></div>
                 )}
                 {p.reviewedAt && (
                   <div className="text-[10px] text-muted-foreground mt-0.5">
@@ -1155,13 +1294,13 @@ function PaymentsTab() {
 
               {p.status === 'PENDING' && rejectId === p.id && (
                 <div className="mt-3 rounded-xl border border-red-200 bg-red-50/50 p-3">
-                  <div className="text-xs font-semibold text-slate-700 mb-1.5">Reason for rejection — select one or more (sent to the user)</div>
+                  <div className="text-xs font-semibold text-foreground mb-1.5">Reason for rejection — select one or more (sent to the user)</div>
                   <div className="flex flex-wrap gap-1.5 mb-2">
                     {PAY_REASONS.map((q) => {
                       const on = reasons.includes(q)
                       return (
                         <button key={q} onClick={() => toggleReason(q)}
-                          className={`text-[10px] px-2 py-0.5 rounded-full border inline-flex items-center gap-1 transition ${on ? 'bg-red-600 text-white border-red-600' : 'bg-card border-border text-slate-600 hover:border-primary'}`}>
+                          className={`text-[10px] px-2 py-0.5 rounded-full border inline-flex items-center gap-1 transition ${on ? 'bg-red-600 text-white border-red-600' : 'bg-card border-border text-muted-foreground hover:border-primary'}`}>
                           {on && <Check className="w-2.5 h-2.5" />}{q}
                         </button>
                       )
@@ -1170,19 +1309,20 @@ function PaymentsTab() {
                   <textarea value={extra} onChange={(e) => setExtra(e.target.value)} rows={2} placeholder="Add any extra details (optional)…"
                     className="w-full px-3 py-2 rounded-lg border border-border bg-card text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition" />
                   {(reasons.length > 0 || extra.trim()) && (
-                    <div className="mt-2 text-[11px] text-slate-500">User will see: <span className="text-slate-700">{buildNote()}</span></div>
+                    <div className="mt-2 text-[11px] text-muted-foreground">User will see: <span className="text-foreground">{buildNote()}</span></div>
                   )}
                   <div className="flex gap-2 mt-2">
                     <button onClick={() => act(p.id, 'reject', buildNote())} disabled={(reasons.length === 0 && !extra.trim()) || actionLoading}
                       className="px-3.5 py-2 rounded-lg bg-red-600 text-white text-xs font-semibold hover:bg-red-700 disabled:opacity-60 inline-flex items-center gap-1.5 transition">
                       {actionLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <X className="w-3.5 h-3.5" />} Confirm Reject
                     </button>
-                    <button onClick={() => { setRejectId(null); setReasons([]); setExtra('') }} className="px-3.5 py-2 rounded-lg bg-card border border-border text-slate-600 text-xs font-semibold hover:bg-muted transition">Cancel</button>
+                    <button onClick={() => { setRejectId(null); setReasons([]); setExtra('') }} className="px-3.5 py-2 rounded-lg bg-card border border-border text-muted-foreground text-xs font-semibold hover:bg-muted transition">Cancel</button>
                   </div>
                 </div>
               )}
             </div>
           ))}
+          <PaginationControls meta={pageMeta} onPage={setPage} />
         </div>
       )}
 
@@ -1195,12 +1335,12 @@ function PaymentsTab() {
           <div className="max-w-3xl w-full bg-card rounded-2xl overflow-hidden shadow-sm" onClick={(e) => e.stopPropagation()}>
             <div className="p-4 border-b border-border flex items-center justify-between">
               <div>
-                <div className="font-bold text-sm text-slate-900">Payment Screenshot</div>
+                <div className="font-bold text-sm text-foreground">Payment Screenshot</div>
                 <div className="text-xs text-muted-foreground mt-0.5">
                   {selected.user.fullName || selected.user.phone} · PKR {Math.round(selected.amount).toLocaleString()} · {selected.type}
                 </div>
               </div>
-              <button onClick={() => setSelected(null)} className="p-1.5 rounded-lg text-slate-500 hover:bg-muted hover:text-slate-900 transition">
+              <button onClick={() => setSelected(null)} className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -1233,18 +1373,27 @@ function PaymentsTab() {
 // ============ USERS ============
 function UsersTab() {
   const [q, setQ] = useState('')
+  const [page, setPage] = useState(1)
+  const [pageMeta, setPageMeta] = useState<PageMeta>(emptyPageMeta)
   const [users, setUsers] = useState<UserRow[]>([])
   const [loading, setLoading] = useState(true)
   const [kycActionLoading, setKycActionLoading] = useState<string | null>(null)
 
   const load = useCallback(() => {
     setLoading(true)
-    fetch(`/api/admin/users?q=${encodeURIComponent(q)}&role=USER`, { cache: 'no-store' })
+    fetch(`/api/admin/users?q=${encodeURIComponent(q)}&role=USER&page=${page}&pageSize=${DEFAULT_PAGE_SIZE}`, { cache: 'no-store' })
       .then((r) => r.json())
-      .then((d) => setUsers(d.users || []))
+      .then((d) => {
+        setUsers(d.users || [])
+        const nextMeta = { page: d.page || 1, pageSize: d.pageSize || DEFAULT_PAGE_SIZE, total: d.total || 0, pages: d.pages || 1 }
+        setPageMeta(nextMeta)
+        if (nextMeta.page !== page) setPage(nextMeta.page)
+      })
       .catch(() => {})
       .finally(() => setLoading(false))
-  }, [q])
+  }, [q, page])
+
+  useEffect(() => { setPage(1) }, [q])
 
   useEffect(() => {
     const t = setTimeout(load, 250)
@@ -1268,18 +1417,55 @@ function UsersTab() {
     }
   }
 
+  const resetKyc = async (id: string, name: string) => {
+    if (!window.confirm(`Ask ${name} to submit KYC documents again? Their current approval will be removed.`)) return
+    setKycActionLoading(id + 'reset')
+    try {
+      const r = await fetch(`/api/admin/kyc/${id}/reset`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ note: 'Your documents need to be submitted again. Please upload clear, correct CNIC photos and a selfie.' }),
+      })
+      const d = await r.json().catch(() => ({}))
+      if (!r.ok) return toast.error(d.error || 'Could not reset KYC')
+      toast.success('KYC reset. User can submit documents again.')
+      load()
+    } finally {
+      setKycActionLoading(null)
+    }
+  }
+
+  const deleteUser = async (id: string, name: string) => {
+    if (!window.confirm(`Delete ${name}'s account and ALL their data (KYC, loans, payments)? This cannot be undone.`)) return
+    setKycActionLoading(id + 'delete')
+    try {
+      const r = await fetch(`/api/admin/kyc/${id}`, { method: 'POST' })
+      const d = await r.json().catch(() => ({}))
+      if (!r.ok) return toast.error(d.error || 'Could not delete user')
+      toast.success('User deleted')
+      load()
+    } finally {
+      setKycActionLoading(null)
+    }
+  }
+
   return (
     <div>
-      <PageTitle icon={Users} title="Users" subtitle="Manage user accounts & KYC" />
+      <PageTitle icon={Users} title="Users" subtitle="Manage user accounts, KYC resets, and wrong approvals" />
 
-      <div className="mt-5 relative max-w-md">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Search by name, phone, CNIC..."
-          className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-border bg-card text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition"
-        />
+      <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative w-full max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search by name, phone, CNIC, email, status..."
+            className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-border bg-card text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition"
+          />
+        </div>
+        <div className="text-xs text-muted-foreground">
+          {pageMeta.total.toLocaleString()} total user{pageMeta.total === 1 ? '' : 's'}
+        </div>
       </div>
 
       {loading ? (
@@ -1304,10 +1490,10 @@ function UsersTab() {
               {users.map((u) => (
                 <tr key={u.id} className="hover:bg-muted/40 transition">
                   <td className="px-4 py-3">
-                    <div className="font-semibold text-slate-900">{u.fullName || '—'}</div>
+                    <div className="font-semibold text-foreground">{u.fullName || '—'}</div>
                     <div className="text-xs text-muted-foreground">{u.phone}</div>
                   </td>
-                  <td className="px-4 py-3 text-xs text-slate-600">{u.cnic || '—'}</td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">{u.cnic || '—'}</td>
                   <td className="px-4 py-3">
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${kycColor(u.kycStatus)}`}>
                       {u.kycStatus}
@@ -1320,7 +1506,7 @@ function UsersTab() {
                         <Check className="w-3.5 h-3.5" /> Unlocked
                       </span>
                     ) : (
-                      <span className="text-slate-400 text-xs inline-flex items-center gap-1">
+                      <span className="text-muted-foreground text-xs inline-flex items-center gap-1">
                         <Lock className="w-3 h-3" /> Locked
                       </span>
                     )}
@@ -1329,29 +1515,50 @@ function UsersTab() {
                     {new Date(u.createdAt).toLocaleDateString('en-PK')}
                   </td>
                   <td className="px-4 py-3">
-                    {u.kycStatus === 'SUBMITTED' && (
-                      <div className="flex gap-1.5">
+                    <div className="flex flex-wrap gap-1.5 min-w-44">
+                      {u.kycStatus === 'SUBMITTED' && (
+                        <>
+                          <button
+                            onClick={() => kycAction(u.id, 'approve')}
+                            disabled={kycActionLoading === u.id + 'approve'}
+                            className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-[10px] font-semibold hover:bg-emerald-700 disabled:opacity-60 inline-flex items-center gap-1 transition"
+                          >
+                            <Check className="w-3 h-3" /> Approve
+                          </button>
+                          <button
+                            onClick={() => kycAction(u.id, 'reject')}
+                            disabled={kycActionLoading === u.id + 'reject'}
+                            className="px-2.5 py-1 rounded-lg bg-card border border-red-200 text-red-600 text-[10px] font-semibold hover:bg-red-50 disabled:opacity-60 inline-flex items-center gap-1 transition"
+                          >
+                            <X className="w-3 h-3" /> Reject
+                          </button>
+                        </>
+                      )}
+                      {u.kycStatus !== 'SUBMITTED' && u.kycStatus !== 'PENDING' && (
                         <button
-                          onClick={() => kycAction(u.id, 'approve')}
-                          disabled={kycActionLoading === u.id + 'approve'}
-                          className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-[10px] font-semibold hover:bg-emerald-700 disabled:opacity-60 inline-flex items-center gap-1 transition"
+                          onClick={() => resetKyc(u.id, u.fullName || u.phone)}
+                          disabled={kycActionLoading === u.id + 'reset'}
+                          className="px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 text-[10px] font-semibold hover:bg-amber-100 disabled:opacity-60 inline-flex items-center gap-1 transition"
                         >
-                          <Check className="w-3 h-3" /> Approve
+                          {kycActionLoading === u.id + 'reset' ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />} Resubmit KYC
                         </button>
-                        <button
-                          onClick={() => kycAction(u.id, 'reject')}
-                          disabled={kycActionLoading === u.id + 'reject'}
-                          className="px-2.5 py-1 rounded-lg bg-card border border-red-200 text-red-600 text-[10px] font-semibold hover:bg-red-50 disabled:opacity-60 inline-flex items-center gap-1 transition"
-                        >
-                          <X className="w-3 h-3" /> Reject
-                        </button>
-                      </div>
-                    )}
+                      )}
+                      <button
+                        onClick={() => deleteUser(u.id, u.fullName || u.phone)}
+                        disabled={kycActionLoading === u.id + 'delete'}
+                        className="px-2.5 py-1 rounded-lg bg-card border border-red-200 text-red-600 text-[10px] font-semibold hover:bg-red-50 disabled:opacity-60 inline-flex items-center gap-1 transition"
+                      >
+                        {kycActionLoading === u.id + 'delete' ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />} Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          <div className="px-4 pb-4">
+            <PaginationControls meta={pageMeta} onPage={setPage} />
+          </div>
         </div>
       )}
     </div>
@@ -1363,18 +1570,30 @@ function LoansTab() {
   const [loans, setLoans] = useState<LoanRow[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<string>('')
+  const [page, setPage] = useState(1)
+  const [pageMeta, setPageMeta] = useState<PageMeta>(emptyPageMeta)
 
   const load = useCallback(() => {
     setLoading(true)
-    const url = filter ? `/api/admin/loans?status=${filter}` : '/api/admin/loans'
+    const params = new URLSearchParams()
+    if (filter) params.set('status', filter)
+    params.set('page', String(page))
+    params.set('pageSize', String(DEFAULT_PAGE_SIZE))
+    const url = `/api/admin/loans?${params.toString()}`
     fetch(url, { cache: 'no-store' })
       .then((r) => r.json())
-      .then((d) => setLoans(d.loans || []))
+      .then((d) => {
+        setLoans(d.loans || [])
+        const nextMeta = { page: d.page || 1, pageSize: d.pageSize || DEFAULT_PAGE_SIZE, total: d.total || 0, pages: d.pages || 1 }
+        setPageMeta(nextMeta)
+        if (nextMeta.page !== page) setPage(nextMeta.page)
+      })
       .catch(() => {})
       .finally(() => setLoading(false))
-  }, [filter])
+  }, [filter, page])
 
   useEffect(() => { load() }, [load])
+  useEffect(() => { setPage(1) }, [filter])
 
   const markRepaid = async (id: string) => {
     if (!window.confirm('Mark this loan as FULLY REPAID? The user can then take a new loan at a lower (loyalty) rate.')) return
@@ -1393,7 +1612,7 @@ function LoansTab() {
             key={f}
             onClick={() => setFilter(f)}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition ${
-              filter === f ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-card border border-border text-slate-600 hover:bg-muted'
+              filter === f ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-card border border-border text-muted-foreground hover:bg-muted'
             }`}
           >
             {f ? f.replace(/_/g, ' ') : 'All'}
@@ -1401,10 +1620,14 @@ function LoansTab() {
         ))}
         <button
           onClick={() => load()}
-          className="ml-auto px-3.5 py-1.5 rounded-lg text-xs font-medium bg-card border border-border text-slate-600 inline-flex items-center gap-1.5 hover:bg-muted transition"
+          className="ml-auto px-3.5 py-1.5 rounded-lg text-xs font-medium bg-card border border-border text-muted-foreground inline-flex items-center gap-1.5 hover:bg-muted transition"
         >
           <RefreshCw className="w-3 h-3" /> Refresh
         </button>
+      </div>
+
+      <div className="mt-4 text-xs text-muted-foreground">
+        {pageMeta.total.toLocaleString()} total loan{pageMeta.total === 1 ? '' : 's'}
       </div>
 
       {loading ? (
@@ -1418,20 +1641,20 @@ function LoansTab() {
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-lg text-slate-900">PKR {Math.round(l.amount).toLocaleString()}</span>
+                    <span className="font-bold text-lg text-foreground">PKR {Math.round(l.amount).toLocaleString()}</span>
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${loanStatusColor(l.status)}`}>
                       {l.status.replace(/_/g, ' ')}
                     </span>
                   </div>
-                  <div className="text-xs text-slate-600 mt-1.5">
-                    User: <strong className="text-slate-900">{l.user.fullName || l.user.phone}</strong> · {l.user.phone}
+                  <div className="text-xs text-muted-foreground mt-1.5">
+                    User: <strong className="text-foreground">{l.user.fullName || l.user.phone}</strong> · {l.user.phone}
                   </div>
                   <div className="text-xs text-muted-foreground mt-0.5">
                     Created: {new Date(l.createdAt).toLocaleString('en-PK', { dateStyle: 'short', timeStyle: 'short' })}
                   </div>
                 </div>
                 <div className="text-right text-xs space-y-0.5">
-                  <div className="text-slate-700">Total: <strong className="text-gold-foreground">PKR {Math.round(l.totalRepayment).toLocaleString()}</strong></div>
+                  <div className="text-foreground">Total: <strong className="text-gold-foreground">PKR {Math.round(l.totalRepayment).toLocaleString()}</strong></div>
                   <div className="text-muted-foreground">Markup: {l.markupPercent}%</div>
                   <div className="text-muted-foreground">Weekly: PKR {Math.round(l.weeklyInstallment).toLocaleString()}</div>
                   <div className="text-muted-foreground">Down Pay: PKR {Math.round(l.downPayment).toLocaleString()}</div>
@@ -1439,7 +1662,7 @@ function LoansTab() {
               </div>
               <div className="mt-4 pt-4 border-t border-border flex flex-wrap gap-2 text-xs">
                 {l.installments.map((inst) => (
-                  <div key={inst.id} className={`px-2.5 py-1.5 rounded-lg border ${inst.status === 'PAID' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-muted border-border text-slate-600'}`}>
+                  <div key={inst.id} className={`px-2.5 py-1.5 rounded-lg border ${inst.status === 'PAID' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-muted border-border text-muted-foreground'}`}>
                     Week {inst.weekNumber}: <strong>PKR {Math.round(inst.amount).toLocaleString()}</strong>
                     <span className="ml-1 opacity-70">({inst.status})</span>
                   </div>
@@ -1455,6 +1678,7 @@ function LoansTab() {
               )}
             </div>
           ))}
+          <PaginationControls meta={pageMeta} onPage={setPage} />
         </div>
       )}
     </div>
@@ -1531,10 +1755,10 @@ function ReelsTab() {
       <PageTitle icon={Video} title="Customer Videos" subtitle="Upload short videos shown in “Our Satisfied Customers” on the home page" />
 
       <div className="mt-5 geo-card p-4 max-w-xl">
-        <div className="text-sm font-semibold text-slate-900 mb-3">Add a new video</div>
+        <div className="text-sm font-semibold text-foreground mb-3">Add a new video</div>
         <button onClick={() => fileRef.current?.click()} disabled={uploading} className="w-full border-2 border-dashed border-border rounded-xl p-5 text-center hover:border-primary transition disabled:opacity-60">
           <UploadCloud className="w-6 h-6 mx-auto text-primary" />
-          <div className="text-xs text-slate-600 mt-1.5">{file ? file.name : 'Tap to choose a video (MP4 / WebM / MOV, max 60MB)'}</div>
+          <div className="text-xs text-muted-foreground mt-1.5">{file ? file.name : 'Tap to choose a video (MP4 / WebM / MOV, max 60MB)'}</div>
         </button>
         <input ref={fileRef} type="file" accept="video/*" className="hidden" onChange={(e) => setFile(e.target.files?.[0] || null)} />
         <input value={title} onChange={(e) => setTitle(e.target.value)} disabled={uploading} placeholder="Title (e.g. Ahsan from Lahore)"
@@ -1544,7 +1768,7 @@ function ReelsTab() {
 
         {uploading ? (
           <div className="mt-4">
-            <div className="flex items-center justify-between text-xs font-medium text-slate-600 mb-1.5">
+            <div className="flex items-center justify-between text-xs font-medium text-muted-foreground mb-1.5">
               <span className="inline-flex items-center gap-1.5">
                 <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
                 {progress < 100 ? 'Uploading your video…' : 'Processing…'}
@@ -1571,7 +1795,7 @@ function ReelsTab() {
             <div key={r.id} className="geo-card overflow-hidden">
               <video src={r.videoPath} controls preload="metadata" className="w-full aspect-[9/16] object-cover bg-black" />
               <div className="p-3">
-                <div className="font-semibold text-sm text-slate-900">{r.title}</div>
+                <div className="font-semibold text-sm text-foreground">{r.title}</div>
                 {r.subtitle && <div className="text-xs text-muted-foreground mt-0.5">{r.subtitle}</div>}
                 <button onClick={() => del(r.id)} className="mt-2 text-xs text-red-600 inline-flex items-center gap-1 hover:underline">
                   <Trash2 className="w-3.5 h-3.5" /> Delete
@@ -1630,7 +1854,7 @@ function AppApkUploader() {
 
   return (
     <div className="geo-card p-4 max-w-xl mb-6">
-      <div className="text-sm font-semibold text-slate-900 mb-1">Mobile App (Android APK)</div>
+      <div className="text-sm font-semibold text-foreground mb-1">Mobile App (Android APK)</div>
       <p className="text-xs text-muted-foreground mb-3">Upload your .apk — a “Download App” button appears on the home page.</p>
 
       {apk.apkPath && (
@@ -1642,7 +1866,7 @@ function AppApkUploader() {
 
       <button onClick={() => fileRef.current?.click()} disabled={uploading} className="w-full border-2 border-dashed border-border rounded-xl p-4 text-center hover:border-primary transition disabled:opacity-60">
         <UploadCloud className="w-5 h-5 mx-auto text-primary" />
-        <div className="text-xs text-slate-600 mt-1.5">{file ? file.name : 'Tap to choose .apk (max 100MB)'}</div>
+        <div className="text-xs text-muted-foreground mt-1.5">{file ? file.name : 'Tap to choose .apk (max 100MB)'}</div>
       </button>
       <input ref={fileRef} type="file" accept=".apk,application/vnd.android.package-archive" className="hidden" onChange={(e) => setFile(e.target.files?.[0] || null)} />
       <input value={version} onChange={(e) => setVersion(e.target.value)} disabled={uploading} placeholder="Version (optional, e.g. v1.0.0)"
@@ -1650,7 +1874,7 @@ function AppApkUploader() {
 
       {uploading ? (
         <div className="mt-3">
-          <div className="flex items-center justify-between text-xs font-medium text-slate-600 mb-1.5">
+          <div className="flex items-center justify-between text-xs font-medium text-muted-foreground mb-1.5">
             <span className="inline-flex items-center gap-1.5"><Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />{progress < 100 ? 'Uploading…' : 'Publishing…'}</span>
             <span className="tabular-nums">{progress}%</span>
           </div>
@@ -1670,6 +1894,7 @@ function AppApkUploader() {
 function SettingsTab() {
   const [s, setS] = useState<SettingsData | null>(null)
   const [saving, setSaving] = useState(false)
+  const [chatSaving, setChatSaving] = useState(false)
   const [packagesText, setPackagesText] = useState('')
 
   useEffect(() => {
@@ -1704,18 +1929,36 @@ function SettingsTab() {
     }
   }
 
+  const saveChat = async (enabled: boolean) => {
+    if (!s || chatSaving) return
+    setChatSaving(true)
+    try {
+      const r = await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chatEnabled: enabled }),
+      })
+      const d = await r.json()
+      if (!r.ok) return toast.error(d.error || 'Failed')
+      setS({ ...s, chatEnabled: enabled })
+      toast.success(enabled ? 'Live chat enabled' : 'Live chat disabled')
+    } finally {
+      setChatSaving(false)
+    }
+  }
+
   if (!s) return <Loading />
 
   return (
     <div>
-      <PageTitle icon={SettingsIcon} title="Settings" subtitle="Configure company account, loan packages & admin credentials" />
+      <PageTitle icon={SettingsIcon} title="Settings" subtitle="Configure company account, loan packages, chat & admin credentials" />
 
       <div className="mt-5"><AppApkUploader /></div>
 
       <div className="mt-6 grid md:grid-cols-2 gap-4">
         {/* Company Account */}
         <div className="geo-card p-6">
-          <h3 className="font-bold text-sm text-slate-900 mb-4 flex items-center gap-2">
+          <h3 className="font-bold text-sm text-foreground mb-4 flex items-center gap-2">
             <span className="w-7 h-7 rounded-lg bg-primary/10 text-primary grid place-items-center">
               <Landmark className="w-4 h-4" />
             </span>
@@ -1731,7 +1974,7 @@ function SettingsTab() {
 
         {/* Loan Config */}
         <div className="geo-card p-6">
-          <h3 className="font-bold text-sm text-slate-900 mb-4 flex items-center gap-2">
+          <h3 className="font-bold text-sm text-foreground mb-4 flex items-center gap-2">
             <span className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 grid place-items-center">
               <Coins className="w-4 h-4" />
             </span>
@@ -1770,9 +2013,42 @@ function SettingsTab() {
           </div>
         </div>
 
+        {/* Live Chat */}
+        <div className="geo-card p-6 md:col-span-2">
+          <h3 className="font-bold text-sm text-foreground mb-4 flex items-center gap-2">
+            <span className={`w-7 h-7 rounded-lg grid place-items-center ${s.chatEnabled !== false ? 'bg-emerald-50 text-emerald-600' : 'bg-muted text-muted-foreground'}`}>
+              <MessageCircle className="w-4 h-4" />
+            </span>
+            Live Chat
+            <span className={`ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full border ${s.chatEnabled !== false ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-muted text-muted-foreground border-border'}`}>
+              {chatSaving ? 'SAVING' : s.chatEnabled !== false ? 'ON' : 'OFF'}
+            </span>
+          </h3>
+          <p className="text-xs text-muted-foreground mb-3">Show or hide the live chat button across the user app and website.</p>
+          <div className="grid grid-cols-2 gap-2 max-w-sm">
+            <button
+              onClick={() => saveChat(true)}
+              disabled={chatSaving || s.chatEnabled !== false}
+              className={`px-3 py-2 rounded-xl text-xs font-semibold border cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 transition ${s.chatEnabled !== false ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-card text-muted-foreground border-border hover:bg-muted'}`}
+            >
+              Chat On
+            </button>
+            <button
+              onClick={() => saveChat(false)}
+              disabled={chatSaving || s.chatEnabled === false}
+              className={`px-3 py-2 rounded-xl text-xs font-semibold border cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 transition ${s.chatEnabled === false ? 'bg-slate-800 text-white border-slate-800' : 'bg-card text-muted-foreground border-border hover:bg-muted'}`}
+            >
+              Chat Off
+            </button>
+          </div>
+          <p className="text-[11px] text-muted-foreground bg-muted border border-border rounded-lg px-3 py-2 mt-4">
+            Active pages sync automatically within a few seconds.
+          </p>
+        </div>
+
         {/* Admin Credentials */}
         <div className="geo-card p-6 md:col-span-2">
-          <h3 className="font-bold text-sm text-slate-900 mb-4 flex items-center gap-2">
+          <h3 className="font-bold text-sm text-foreground mb-4 flex items-center gap-2">
             <span className="w-7 h-7 rounded-lg bg-primary/10 text-primary grid place-items-center">
               <KeyRound className="w-4 h-4" />
             </span>
@@ -1802,6 +2078,64 @@ function SettingsTab() {
 }
 
 // ============ HELPERS ============
+function PaginationControls({ meta, onPage }: { meta: PageMeta; onPage: (page: number) => void }) {
+  if (meta.pages <= 1) return null
+
+  const windowPages = Array.from(
+    new Set([
+      1,
+      meta.pages,
+      meta.page - 2,
+      meta.page - 1,
+      meta.page,
+      meta.page + 1,
+      meta.page + 2,
+    ].filter((p) => p >= 1 && p <= meta.pages)),
+  ).sort((a, b) => a - b)
+
+  const start = (meta.page - 1) * meta.pageSize + 1
+  const end = Math.min(meta.page * meta.pageSize, meta.total)
+
+  return (
+    <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="text-xs text-muted-foreground">
+        Showing {start.toLocaleString()}-{end.toLocaleString()} of {meta.total.toLocaleString()}
+      </div>
+      <div className="flex flex-wrap items-center gap-1.5">
+        <button
+          onClick={() => onPage(Math.max(1, meta.page - 1))}
+          disabled={meta.page <= 1}
+          className="h-9 px-3 rounded-lg border border-border bg-card text-xs font-semibold text-muted-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition"
+        >
+          Prev
+        </button>
+        {windowPages.map((p, idx) => (
+          <div key={p} className="flex items-center gap-1.5">
+            {idx > 0 && p - windowPages[idx - 1] > 1 && <span className="px-1 text-xs text-muted-foreground">...</span>}
+            <button
+              onClick={() => onPage(p)}
+              className={`h-9 min-w-9 px-3 rounded-lg border text-xs font-semibold cursor-pointer transition ${
+                meta.page === p
+                  ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+                  : 'bg-card border-border text-muted-foreground hover:bg-muted'
+              }`}
+            >
+              {p}
+            </button>
+          </div>
+        ))}
+        <button
+          onClick={() => onPage(Math.min(meta.pages, meta.page + 1))}
+          disabled={meta.page >= meta.pages}
+          className="h-9 px-3 rounded-lg border border-border bg-card text-xs font-semibold text-muted-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  )
+}
+
 function PageTitle({ icon: Icon, title, subtitle }: { icon: any; title: string; subtitle: string }) {
   return (
     <div>
@@ -1810,7 +2144,7 @@ function PageTitle({ icon: Icon, title, subtitle }: { icon: any; title: string; 
           <Icon className="w-5 h-5" />
         </div>
         <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight">{title}</h1>
+          <h1 className="text-xl font-bold text-foreground tracking-tight">{title}</h1>
           <p className="text-sm text-muted-foreground">{subtitle}</p>
         </div>
       </div>
@@ -1843,7 +2177,7 @@ function SettingField({
 }) {
   return (
     <div>
-      <label className="block text-xs font-semibold text-slate-700 mb-1.5">{label}</label>
+      <label className="block text-xs font-semibold text-foreground mb-1.5">{label}</label>
       <input
         type={type}
         value={value}
@@ -1858,14 +2192,14 @@ function statusColor(s: string) {
   if (s === 'PENDING') return 'bg-amber-50 text-amber-600 border-amber-200'
   if (s === 'APPROVED') return 'bg-emerald-50 text-emerald-600 border-emerald-200'
   if (s === 'REJECTED') return 'bg-red-50 text-red-600 border-red-200'
-  return 'bg-muted text-slate-600 border-border'
+  return 'bg-muted text-muted-foreground border-border'
 }
 
 function kycColor(s: string) {
   if (s === 'APPROVED') return 'bg-emerald-50 text-emerald-600 border-emerald-200'
   if (s === 'SUBMITTED') return 'bg-amber-50 text-amber-600 border-amber-200'
   if (s === 'REJECTED') return 'bg-red-50 text-red-600 border-red-200'
-  return 'bg-muted text-slate-600 border-border'
+  return 'bg-muted text-muted-foreground border-border'
 }
 
 function loanStatusColor(s: string) {
@@ -1877,5 +2211,5 @@ function loanStatusColor(s: string) {
     REPAID: 'bg-emerald-50 text-emerald-600 border-emerald-200',
     REJECTED: 'bg-red-50 text-red-600 border-red-200',
   }
-  return map[s] || 'bg-muted text-slate-600 border-border'
+  return map[s] || 'bg-muted text-muted-foreground border-border'
 }

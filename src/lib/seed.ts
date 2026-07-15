@@ -22,7 +22,7 @@ export async function seedDefaults() {
     create: {
       id: 'default',
       bankName: 'HBL - Habib Bank Ltd',
-      accountTitle: 'GEO Loan (Pvt) Ltd',
+      accountTitle: 'Smart Qarz (Pvt) Ltd',
       accountNumber: '1234-5678-9012-3456',
       mobileAccount: '0300-1234567',
       markupPercent: 5,
@@ -40,7 +40,7 @@ export async function seedDefaults() {
       data: {
         phone: DEFAULT_ADMIN_PHONE,
         password: await bcrypt.hash(DEFAULT_ADMIN_PASSWORD, 10),
-        fullName: 'GEO Loan Admin',
+        fullName: 'Smart Qarz Admin',
         role: 'ADMIN',
         kycStatus: 'APPROVED',
       },

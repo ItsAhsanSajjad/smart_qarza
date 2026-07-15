@@ -50,14 +50,14 @@ export function KycVerifying({ userName, elapsed }: { userName: string; elapsed:
           {/* body: photo + data lines */}
           <div className="p-3 flex gap-3">
             <div className="relative w-14 h-16 rounded-md bg-muted border border-border grid place-items-center overflow-hidden shrink-0">
-              <UserRound className="w-7 h-7 text-slate-300" />
+              <UserRound className="w-7 h-7 text-muted-foreground" />
             </div>
             <div className="flex-1 space-y-1.5 pt-1">
               <div className="h-1.5 w-3/4 rounded-full bg-muted animate-pulse" />
               <div className="h-1.5 w-full rounded-full bg-muted animate-pulse" style={{ animationDelay: '.2s' }} />
               <div className="h-1.5 w-2/3 rounded-full bg-muted animate-pulse" style={{ animationDelay: '.4s' }} />
               <div className="mt-2 h-1.5 w-1/2 rounded-full bg-primary/30" />
-              <div className="text-[8px] font-mono text-slate-400 tracking-wider pt-0.5">42101-•••••••-•</div>
+              <div className="text-[8px] font-mono text-muted-foreground tracking-wider pt-0.5">42101-•••••••-•</div>
             </div>
           </div>
           {/* sweeping scan beam */}
@@ -84,9 +84,9 @@ export function KycVerifying({ userName, elapsed }: { userName: string; elapsed:
 
       {/* ===== heading + secure-connection indicator ===== */}
       <div className="text-center mt-5">
-        <h2 className="font-bold text-lg text-slate-900">Verifying your identity</h2>
-        <p className="text-sm text-slate-600 mt-1">Hi {userName}, our team is reviewing your documents.</p>
-        <div className="mt-2.5 inline-flex items-center gap-2 text-[11px] font-medium text-slate-500">
+        <h2 className="font-bold text-lg text-foreground">Verifying your identity</h2>
+        <p className="text-sm text-muted-foreground mt-1">Hi {userName}, our team is reviewing your documents.</p>
+        <div className="mt-2.5 inline-flex items-center gap-2 text-[11px] font-medium text-muted-foreground">
           <span className="relative flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
@@ -102,7 +102,7 @@ export function KycVerifying({ userName, elapsed }: { userName: string; elapsed:
         </span>
         <span className="text-xs font-bold text-primary tabular-nums">{Math.round(progress)}%</span>
       </div>
-      <div className="mt-3 relative h-2 rounded-full bg-slate-100 overflow-hidden geo-shine-loop max-w-xs mx-auto">
+      <div className="mt-3 relative h-2 rounded-full bg-muted overflow-hidden geo-shine-loop max-w-xs mx-auto">
         <motion.div
           className="h-full geo-gradient rounded-full"
           initial={{ width: 0 }}
@@ -140,15 +140,15 @@ export function KycVerifying({ userName, elapsed }: { userName: string; elapsed:
                     <Loader2 className="w-5 h-5 text-primary animate-spin" />
                   </>
                 ) : (
-                  <span className="w-3.5 h-3.5 rounded-full border-2 border-slate-300" />
+                  <span className="w-3.5 h-3.5 rounded-full border-2 border-border" />
                 )}
               </span>
-              <span className={`grid place-items-center w-7 h-7 rounded-lg shrink-0 transition-colors ${done ? 'bg-emerald-100 text-emerald-600' : active ? 'bg-primary/10 text-primary' : 'bg-slate-100 text-slate-400'}`}>
+              <span className={`grid place-items-center w-7 h-7 rounded-lg shrink-0 transition-colors ${done ? 'bg-emerald-100 text-emerald-600' : active ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
                 <s.icon className="w-4 h-4" />
               </span>
-              <span className={`flex-1 text-sm ${done ? 'text-emerald-700' : active ? 'text-slate-900 font-semibold' : 'text-slate-400'}`}>{s.label}</span>
+              <span className={`flex-1 text-sm ${done ? 'text-emerald-700' : active ? 'text-foreground font-semibold' : 'text-muted-foreground'}`}>{s.label}</span>
               {s.nadra && (
-                <span className={`inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded ${done ? 'bg-emerald-100 text-emerald-700' : active ? 'bg-primary/10 text-primary' : 'bg-slate-100 text-slate-400'}`}>
+                <span className={`inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded ${done ? 'bg-emerald-100 text-emerald-700' : active ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
                   <Fingerprint className="w-2.5 h-2.5" /> NADRA
                 </span>
               )}
@@ -161,7 +161,7 @@ export function KycVerifying({ userName, elapsed }: { userName: string; elapsed:
       <div className="mt-5 max-w-xs mx-auto p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-700 text-center">
         Status: <span className="font-semibold">PENDING ADMIN REVIEW</span>
       </div>
-      <p className="text-[11px] text-slate-400 mt-3 text-center">Please keep this page open — it updates automatically.</p>
+      <p className="text-[11px] text-muted-foreground mt-3 text-center">Please keep this page open — it updates automatically.</p>
     </div>
   )
 }

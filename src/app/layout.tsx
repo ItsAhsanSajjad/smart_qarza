@@ -1,19 +1,31 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Noto_Naskh_Arabic } from "next/font/google";
+import { Inter, Poppins, IBM_Plex_Mono, Noto_Naskh_Arabic } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import ImpersonationBanner from "@/components/impersonation-banner";
 import LiveChat from "@/components/live-chat";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Clean, technical body sans.
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// Friendly, professional display face for headings (PK fintech feel).
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
+  weight: ["500", "600", "700", "800"],
+  display: "swap",
+});
+
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
 });
 
 // Clean, professional Urdu/Arabic typeface for all Urdu text.
@@ -25,17 +37,17 @@ const notoUrdu = Noto_Naskh_Arabic({
 });
 
 export const metadata: Metadata = {
-  title: "GEO Loan.pk — آسان قرض، روشن مستقبل",
+  title: "Smart Qarz — آسان قرض، روشن مستقبل",
   description:
-    "GEO Loan.pk — easy loans for a brighter future. Register, complete KYC, choose a loan package, and manage repayments in one secure app.",
-  keywords: ["GEO Loan", "GEO Loan.pk", "Loan", "Pakistan", "EasyPaisa", "JazzCash", "Personal Loan", "Digital Lending"],
-  authors: [{ name: "GEO Loan.pk" }],
-  applicationName: "GEO Loan.pk",
-  icons: { icon: "/icon.png", apple: "/icon.png" },
+    "Smart Qarz — easy loans for a brighter future. Register, complete KYC, choose a loan package, and manage repayments in one secure app.",
+  keywords: ["Smart Qarz", "SmartQarz", "Loan", "Qarz", "Pakistan", "EasyPaisa", "JazzCash", "Personal Loan", "Digital Lending"],
+  authors: [{ name: "Smart Qarz" }],
+  applicationName: "Smart Qarz",
+  icons: { icon: "/logo-sq.png", apple: "/logo-sq.png" },
 };
 
 export const viewport = {
-  themeColor: "#15783a",
+  themeColor: "#0f9d58",
 };
 
 export default function RootLayout({
@@ -44,10 +56,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${notoUrdu.variable} antialiased bg-background text-foreground`}
-      >
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${inter.variable} ${poppins.variable} ${plexMono.variable} ${notoUrdu.variable}`}
+    >
+      <body className="font-sans antialiased bg-background text-foreground">
         {children}
         <ImpersonationBanner />
         <Toaster />

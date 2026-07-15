@@ -10,7 +10,7 @@ export function CtaBanner() {
   return (
     <section className="max-w-6xl mx-auto px-4 pb-20">
       <Reveal>
-        <div className="geo-gradient-animated geo-shine-loop relative overflow-hidden rounded-3xl px-8 py-10 sm:px-12 sm:py-14 text-center text-white shadow-[0_30px_60px_-30px_oklch(0.45_0.12_152_/_0.6)]">
+        <div className="geo-gradient-animated geo-shine-loop relative overflow-hidden rounded-3xl px-8 py-10 sm:px-12 sm:py-14 text-center text-white ring-1 ring-white/10 shadow-[0_40px_80px_-30px_oklch(0.5_0.13_162_/_0.7)]">
           {/* soft inner glow */}
           <div className="pointer-events-none absolute inset-0 opacity-30" style={{ background: 'radial-gradient(600px 240px at 50% 0%, rgba(255,255,255,0.35), transparent 70%)' }} aria-hidden />
 
@@ -18,8 +18,8 @@ export function CtaBanner() {
             <span className="inline-grid place-items-center w-12 h-12 rounded-2xl bg-white/10 ring-1 ring-white/20 mx-auto mb-4">
               <Sparkles className="w-6 h-6 text-gold" />
             </span>
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
-              Ready to build a brighter future with GEO Loan.pk?
+            <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight">
+              Ready to build a brighter future with Smart Qarz?
             </h2>
             <p dir="rtl" className="font-urdu mt-2 text-lg font-semibold text-white/95">{TAGLINE_UR}</p>
             <p className="mt-2 text-white/80 max-w-xl mx-auto">

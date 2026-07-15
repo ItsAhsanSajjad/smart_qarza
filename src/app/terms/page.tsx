@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { LegalLayout, Section } from '@/components/legal/legal-layout'
 
 export const metadata: Metadata = {
-  title: 'Terms of Service — GEO Loan.pk',
-  description: 'The terms and conditions for using the GEO Loan.pk digital lending platform.',
+  title: 'Terms of Service — Smart Qarz',
+  description: 'The terms and conditions for using the Smart Qarz digital lending platform.',
 }
 
 export default function TermsPage() {
@@ -11,11 +11,11 @@ export default function TermsPage() {
     <LegalLayout
       title="Terms of Service"
       updated="20 June 2026"
-      intro="These terms set out the rules for using GEO Loan.pk. Please read them carefully before creating an account or applying for a loan."
+      intro="These terms set out the rules for using Smart Qarz. Please read them carefully before creating an account or applying for a loan."
     >
       <Section title="1. Acceptance of Terms">
         <p>
-          By creating an account or using GEO Loan.pk (the &ldquo;Service&rdquo;), you agree to be bound by these Terms of
+          By creating an account or using Smart Qarz (the &ldquo;Service&rdquo;), you agree to be bound by these Terms of
           Service and our Privacy Policy. If you do not agree, please do not use the Service.
         </p>
       </Section>
@@ -95,7 +95,7 @@ export default function TermsPage() {
 
       <Section title="10. Limitation of Liability">
         <p>
-          To the maximum extent permitted by law, GEO Loan.pk shall not be liable for any indirect, incidental, or
+          To the maximum extent permitted by law, Smart Qarz shall not be liable for any indirect, incidental, or
           consequential damages, or for any loss arising from inaccurate information you provide or from unauthorised use
           of your account.
         </p>
@@ -126,7 +126,7 @@ export default function TermsPage() {
       <Section title="14. Contact Us">
         <p>
           Questions about these Terms? Contact us at{' '}
-          <a href="mailto:info@geoloan.pk" className="text-primary font-medium hover:underline">info@geoloan.pk</a>.
+          <a href="mailto:info@smartqarz.pk" className="text-primary font-medium hover:underline">info@smartqarz.pk</a>.
         </p>
       </Section>
     </LegalLayout>

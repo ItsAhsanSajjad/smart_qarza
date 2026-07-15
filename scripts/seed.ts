@@ -13,7 +13,7 @@ async function main() {
     create: {
       id: 'default',
       bankName: 'HBL - Habib Bank Ltd',
-      accountTitle: 'GEO Loan (Pvt) Ltd',
+      accountTitle: 'Smart Qarz (Pvt) Ltd',
       accountNumber: '1234-5678-9012-3456',
       mobileAccount: '0300-1234567',
       markupPercent: 5,
@@ -33,7 +33,7 @@ async function main() {
       data: {
         phone: ADMIN_PHONE,
         password: hash,
-        fullName: 'GEO Loan Admin',
+        fullName: 'Smart Qarz Admin',
         role: 'ADMIN',
         kycStatus: 'APPROVED',
       },

@@ -74,3 +74,10 @@ public/uploads/payments/*
 
 # Source/personal assets — not needed at runtime, keep off the public repo
 /assets/
+
+# Build artifacts / packaged bundles
+*.zip
+
+# Internal deploy notes (contain live server IP + credentials — keep out of the repo)
+/DEPLOY-HOSTBREAK.md
+/docs/DEPLOY-SUPERADMIN.md

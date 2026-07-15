@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { requireAdmin } from '@/lib/session'
+import { recordApprovedPaymentInLedger } from '@/lib/financial-ledger'
 
 // POST /api/admin/payments/[id]/approve
 // Body: { note? }
@@ -27,6 +28,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   // 2) Based on type, update loan status & wallet
   // 3) Notify user
 
+  const reviewedAt = new Date()
   await db.$transaction(async (tx) => {
     await tx.payment.update({
       where: { id },
@@ -34,9 +36,14 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
         status: 'APPROVED',
         adminNote: note || null,
         reviewedBy: admin.id,
-        reviewedAt: new Date(),
+        reviewedAt,
       },
     })
+    await recordApprovedPaymentInLedger(
+      tx,
+      { ...payment, status: 'APPROVED', adminNote: note || null, reviewedBy: admin.id, reviewedAt },
+      admin,
+    )
 
     if (!payment.loan) {
       // standalone payment (shouldn't happen for our flow)

@@ -14,11 +14,11 @@ export function Features() {
   return (
     <section className="max-w-6xl mx-auto px-4 pb-20">
       <Reveal className="mb-10 max-w-2xl mx-auto text-center">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
+        <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
           Everything you need to lend with confidence
         </h2>
         <div className="geo-rule-gold mt-3 w-24 mx-auto" />
-        <p className="mt-3 text-slate-600">
+        <p className="mt-3 text-muted-foreground">
           A verified, end-to-end workflow from KYC to payout — built for trust.
         </p>
       </Reveal>
@@ -27,11 +27,11 @@ export function Features() {
         {FEATURES.map((f) => (
           <RevealItem key={f.title}>
             <div className="geo-card geo-hover-card group h-full p-6 rounded-2xl">
-              <span className="inline-grid place-items-center w-11 h-11 rounded-xl bg-primary/10 text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-white group-hover:scale-110 group-hover:-rotate-6">
+              <span className="inline-grid place-items-center w-11 h-11 rounded-xl bg-primary/12 text-primary ring-1 ring-primary/20 transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110 group-hover:-rotate-6">
                 <f.icon className="w-5 h-5" />
               </span>
-              <div className="font-bold text-lg mt-4 text-slate-900">{f.title}</div>
-              <div className="text-slate-600 text-sm mt-1.5 leading-relaxed">{f.text}</div>
+              <div className="font-display font-bold text-lg mt-4 text-foreground">{f.title}</div>
+              <div className="text-muted-foreground text-sm mt-1.5 leading-relaxed">{f.text}</div>
             </div>
           </RevealItem>
         ))}

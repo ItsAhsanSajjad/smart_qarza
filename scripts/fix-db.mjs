@@ -121,7 +121,7 @@ const STATEMENTS = [
   `CREATE TABLE IF NOT EXISTS "Setting" (
     "id" TEXT NOT NULL PRIMARY KEY DEFAULT 'default',
     "bankName" TEXT NOT NULL DEFAULT 'HBL - Habib Bank Ltd',
-    "accountTitle" TEXT NOT NULL DEFAULT 'GEO Loan (Pvt) Ltd',
+    "accountTitle" TEXT NOT NULL DEFAULT 'Smart Qarz (Pvt) Ltd',
     "accountNumber" TEXT NOT NULL DEFAULT '1234-5678-9012-3456',
     "mobileAccount" TEXT NOT NULL DEFAULT '0300-1234567',
     "markupPercent" REAL NOT NULL DEFAULT 5,
@@ -180,7 +180,7 @@ const STATEMENTS = [
   `ALTER TABLE "User" ADD COLUMN "withdrawUnlocked" BOOLEAN NOT NULL DEFAULT 0`,
   `ALTER TABLE "User" ADD COLUMN "currentLoanId" TEXT`,
   `ALTER TABLE "Setting" ADD COLUMN "bankName" TEXT NOT NULL DEFAULT 'HBL - Habib Bank Ltd'`,
-  `ALTER TABLE "Setting" ADD COLUMN "accountTitle" TEXT NOT NULL DEFAULT 'GEO Loan (Pvt) Ltd'`,
+  `ALTER TABLE "Setting" ADD COLUMN "accountTitle" TEXT NOT NULL DEFAULT 'Smart Qarz (Pvt) Ltd'`,
   `ALTER TABLE "Setting" ADD COLUMN "accountNumber" TEXT NOT NULL DEFAULT '1234-5678-9012-3456'`,
   `ALTER TABLE "Setting" ADD COLUMN "mobileAccount" TEXT NOT NULL DEFAULT '0300-1234567'`,
   `ALTER TABLE "Setting" ADD COLUMN "markupPercent" REAL NOT NULL DEFAULT 5`,

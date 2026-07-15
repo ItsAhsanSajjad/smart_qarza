@@ -34,6 +34,7 @@ export async function POST(req: NextRequest) {
     'minMarkupPercent',
     'loanPackages',
     'adminPhone',
+    'chatEnabled',
   ]
   const data: Record<string, any> = {}
   for (const k of allowed) {

@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { LegalLayout, Section } from '@/components/legal/legal-layout'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy — GEO Loan.pk',
-  description: 'How GEO Loan.pk collects, uses, and protects your personal and identity information.',
+  title: 'Privacy Policy — Smart Qarz',
+  description: 'How Smart Qarz collects, uses, and protects your personal and identity information.',
 }
 
 export default function PrivacyPage() {
@@ -11,15 +11,15 @@ export default function PrivacyPage() {
     <LegalLayout
       title="Privacy Policy"
       updated="20 June 2026"
-      intro="Your privacy matters to us. This policy explains what information GEO Loan.pk collects, why we collect it, and how we keep it safe."
+      intro="Your privacy matters to us. This policy explains what information Smart Qarz collects, why we collect it, and how we keep it safe."
     >
       <Section title="1. Introduction">
         <p>
-          GEO Loan.pk (&ldquo;GEO Loan&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;, or &ldquo;our&rdquo;) operates a digital lending
+          Smart Qarz (&ldquo;Smart Qarz&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;, or &ldquo;our&rdquo;) operates a digital lending
           platform that lets users register, complete identity verification (KYC), apply for loans, and manage repayments.
           This Privacy Policy describes how we handle your information when you use our website and application.
         </p>
-        <p>By using GEO Loan.pk, you agree to the collection and use of information as described in this policy.</p>
+        <p>By using Smart Qarz, you agree to the collection and use of information as described in this policy.</p>
       </Section>
 
       <Section title="2. Information We Collect">
@@ -88,7 +88,7 @@ export default function PrivacyPage() {
           <li>request deletion of your account and associated data;</li>
           <li>withdraw consent where processing is based on consent.</li>
         </ul>
-        <p>To exercise any of these rights, contact us at <a href="mailto:info@geoloan.pk" className="text-primary font-medium hover:underline">info@geoloan.pk</a>.</p>
+        <p>To exercise any of these rights, contact us at <a href="mailto:info@smartqarz.pk" className="text-primary font-medium hover:underline">info@smartqarz.pk</a>.</p>
       </Section>
 
       <Section title="8. Cookies and Sessions">
@@ -100,7 +100,7 @@ export default function PrivacyPage() {
 
       <Section title="9. Children's Privacy">
         <p>
-          GEO Loan.pk is intended only for individuals who are 18 years of age or older. We do not knowingly collect
+          Smart Qarz is intended only for individuals who are 18 years of age or older. We do not knowingly collect
           information from anyone under 18.
         </p>
       </Section>
@@ -115,7 +115,7 @@ export default function PrivacyPage() {
       <Section title="11. Contact Us">
         <p>
           If you have questions about this Privacy Policy or how your data is handled, contact us at{' '}
-          <a href="mailto:info@geoloan.pk" className="text-primary font-medium hover:underline">info@geoloan.pk</a>.
+          <a href="mailto:info@smartqarz.pk" className="text-primary font-medium hover:underline">info@smartqarz.pk</a>.
         </p>
       </Section>
     </LegalLayout>

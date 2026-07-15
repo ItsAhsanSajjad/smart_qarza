@@ -114,8 +114,8 @@ export default function UserApp() {
           <div className="w-12 h-12 mx-auto rounded-2xl bg-primary/10 grid place-items-center">
             <ShieldCheck className="w-6 h-6 text-primary" />
           </div>
-          <h2 className="font-bold text-xl mt-4 text-slate-900">Admin Account Detected</h2>
-          <p className="text-sm text-slate-600 mt-1.5">This account is for admin access. Please use the admin panel.</p>
+          <h2 className="font-bold text-xl mt-4 text-foreground">Admin Account Detected</h2>
+          <p className="text-sm text-muted-foreground mt-1.5">This account is for admin access. Please use the admin panel.</p>
           <div className="mt-5 flex flex-col gap-2">
             <a href="/admin" className="geo-gradient text-white px-4 py-2.5 rounded-xl font-semibold shadow-sm hover:opacity-95 transition">Go to Admin Panel</a>
             <LogoutBtn />
@@ -138,7 +138,7 @@ function PwInput({
   const [show, setShow] = useState(false)
   return (
     <div className="relative">
-      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
       <input
         type={show ? 'text' : 'password'}
         value={value}
@@ -146,13 +146,13 @@ function PwInput({
         placeholder={placeholder}
         autoComplete={autoComplete}
         onKeyDown={(e) => { if (e.key === 'Enter' && onEnter) onEnter() }}
-        className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none text-sm transition"
+        className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none text-sm transition"
       />
       <button
         type="button"
         onClick={() => setShow((s) => !s)}
         aria-label={show ? 'Hide password' : 'Show password'}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition"
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground transition"
       >
         {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
       </button>
@@ -253,33 +253,33 @@ function AuthScreen({
     } finally { setLoading(false) }
   }
 
-  const inputCls = 'w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none text-sm transition'
+  const inputCls = 'w-full pl-10 pr-3 py-2.5 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none text-sm transition'
 
   return (
     <div className="min-h-screen geo-surface grid place-items-center p-4">
       <div className="phone-shell">
-        <div className="bg-white px-7 pt-8 pb-6 text-center border-b border-slate-200 relative">
+        <div className="bg-card px-7 pt-8 pb-6 text-center border-b border-border relative">
           <div className="flex justify-center">
             <BrandLogo height={52} />
           </div>
           <div className="mt-4 flex flex-col items-center gap-1">
             <span dir="rtl" className="font-urdu text-sm font-semibold text-primary">{TAGLINE_UR}</span>
-            <span className="text-[11px] text-slate-500">{TAGLINE_EN}</span>
+            <span className="text-[11px] text-muted-foreground">{TAGLINE_EN}</span>
           </div>
           <div className="geo-rule-gold mt-4 mx-auto w-24" />
         </div>
 
         <div className="p-6">
-          <div className="flex bg-slate-100 rounded-xl p-1 mb-6">
+          <div className="flex bg-muted rounded-xl p-1 mb-6">
             <button
               onClick={() => switchView('login')}
-              className={`flex-1 py-2 rounded-lg text-sm font-semibold transition ${view === 'login' ? 'bg-white shadow-sm text-primary' : 'text-slate-600'}`}
+              className={`flex-1 py-2 rounded-lg text-sm font-semibold transition ${view === 'login' ? 'bg-card shadow-sm text-primary' : 'text-muted-foreground'}`}
             >
               Login
             </button>
             <button
               onClick={() => switchView('register')}
-              className={`flex-1 py-2 rounded-lg text-sm font-semibold transition ${view === 'register' ? 'bg-white shadow-sm text-primary' : 'text-slate-600'}`}
+              className={`flex-1 py-2 rounded-lg text-sm font-semibold transition ${view === 'register' ? 'bg-card shadow-sm text-primary' : 'text-muted-foreground'}`}
             >
               Register
             </button>
@@ -289,15 +289,15 @@ function AuthScreen({
           {view === 'login' && !forgot && (
             <>
               <div className="mb-4">
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">Phone Number</label>
+                <label className="block text-xs font-semibold text-foreground mb-1.5">Phone Number</label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <input value={phone} onChange={(e) => setPhone(normalizePhone(e.target.value))}
                     placeholder="03001234567" type="tel" inputMode="numeric" maxLength={PHONE_LENGTH} className={inputCls} />
                 </div>
               </div>
               <div className="mb-2">
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">Password</label>
+                <label className="block text-xs font-semibold text-foreground mb-1.5">Password</label>
                 <PwInput value={password} onChange={setPassword} placeholder="Enter your password" onEnter={doLogin} autoComplete="current-password" />
               </div>
               <div className="mb-5 text-right">
@@ -319,16 +319,16 @@ function AuthScreen({
                 <span className="inline-grid place-items-center w-12 h-12 rounded-full bg-primary/10">
                   <KeyRound className="w-6 h-6 text-primary" />
                 </span>
-                <h3 className="font-bold text-slate-900 mt-2">Reset your password</h3>
-                <p className="text-xs text-slate-500 mt-0.5">Answer your security question — no code needed.</p>
+                <h3 className="font-bold text-foreground mt-2">Reset your password</h3>
+                <p className="text-xs text-muted-foreground mt-0.5">Answer your security question — no code needed.</p>
               </div>
 
               {fStep === 'phone' && (
                 <>
                   <div className="mb-6">
-                    <label className="block text-xs font-semibold text-slate-700 mb-1.5">Phone Number</label>
+                    <label className="block text-xs font-semibold text-foreground mb-1.5">Phone Number</label>
                     <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <input value={phone} onChange={(e) => setPhone(normalizePhone(e.target.value))}
                         placeholder="03001234567" type="tel" inputMode="numeric" maxLength={PHONE_LENGTH} className={inputCls} />
                     </div>
@@ -342,24 +342,24 @@ function AuthScreen({
 
               {fStep === 'reset' && (
                 <>
-                  <div className="mb-4 p-2.5 rounded-xl bg-primary/5 border border-primary/15 text-xs text-slate-700 flex gap-2">
+                  <div className="mb-4 p-2.5 rounded-xl bg-primary/5 border border-primary/15 text-xs text-foreground flex gap-2">
                     <HelpCircle className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                     <span>{fQuestion}</span>
                   </div>
                   <div className="mb-4">
-                    <label className="block text-xs font-semibold text-slate-700 mb-1.5">Your Answer</label>
+                    <label className="block text-xs font-semibold text-foreground mb-1.5">Your Answer</label>
                     <div className="relative">
-                      <HelpCircle className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <HelpCircle className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <input value={fAnswer} onChange={(e) => setFAnswer(e.target.value)}
                         placeholder="Answer to your security question" className={inputCls} />
                     </div>
                   </div>
                   <div className="mb-4">
-                    <label className="block text-xs font-semibold text-slate-700 mb-1.5">New Password</label>
+                    <label className="block text-xs font-semibold text-foreground mb-1.5">New Password</label>
                     <PwInput value={password} onChange={setPassword} placeholder="At least 8 characters" autoComplete="new-password" />
                   </div>
                   <div className="mb-6">
-                    <label className="block text-xs font-semibold text-slate-700 mb-1.5">Confirm New Password</label>
+                    <label className="block text-xs font-semibold text-foreground mb-1.5">Confirm New Password</label>
                     <PwInput value={confirmPassword} onChange={setConfirmPassword} placeholder="Re-enter new password" onEnter={doReset} autoComplete="new-password" />
                     {confirmPassword.length > 0 && password !== confirmPassword && (
                       <p className="mt-1 text-[11px] text-amber-600">Passwords do not match</p>
@@ -373,7 +373,7 @@ function AuthScreen({
               )}
 
               <div className="mt-4 text-center">
-                <button onClick={() => { setForgot(false); setFStep('phone') }} className="text-xs text-slate-500 hover:text-primary inline-flex items-center gap-1">
+                <button onClick={() => { setForgot(false); setFStep('phone') }} className="text-xs text-muted-foreground hover:text-primary inline-flex items-center gap-1">
                   <ArrowLeft className="w-3 h-3" /> Back to login
                 </button>
               </div>
@@ -384,17 +384,17 @@ function AuthScreen({
           {view === 'register' && (
             <>
               <div className="mb-4">
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">Full Name</label>
+                <label className="block text-xs font-semibold text-foreground mb-1.5">Full Name</label>
                 <div className="relative">
-                  <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <input value={fullName} onChange={(e) => setFullName(sanitizeName(e.target.value))}
                     placeholder="Enter your full name" className={inputCls} />
                 </div>
               </div>
               <div className="mb-4">
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">Phone Number</label>
+                <label className="block text-xs font-semibold text-foreground mb-1.5">Phone Number</label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <input value={phone} onChange={(e) => setPhone(normalizePhone(e.target.value))}
                     placeholder="03001234567" type="tel" inputMode="numeric" maxLength={PHONE_LENGTH} className={inputCls} />
                 </div>
@@ -403,34 +403,34 @@ function AuthScreen({
                 )}
               </div>
               <div className="mb-4">
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">Password</label>
+                <label className="block text-xs font-semibold text-foreground mb-1.5">Password</label>
                 <PwInput value={password} onChange={setPassword} placeholder="At least 8 characters" autoComplete="new-password" />
               </div>
               <div className="mb-4">
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">Confirm Password</label>
+                <label className="block text-xs font-semibold text-foreground mb-1.5">Confirm Password</label>
                 <PwInput value={confirmPassword} onChange={setConfirmPassword} placeholder="Re-enter your password" autoComplete="new-password" />
                 {confirmPassword.length > 0 && password !== confirmPassword && (
                   <p className="mt-1 text-[11px] text-amber-600">Passwords do not match</p>
                 )}
               </div>
               <div className="mb-4">
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">Security Question</label>
+                <label className="block text-xs font-semibold text-foreground mb-1.5">Security Question</label>
                 <div className="relative">
-                  <HelpCircle className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <HelpCircle className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <select value={securityQuestion} onChange={(e) => setSecurityQuestion(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-200 bg-white focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none text-sm transition appearance-none">
+                    className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-border bg-card focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none text-sm transition appearance-none">
                     {SECURITY_QUESTIONS.map((q) => <option key={q} value={q}>{q}</option>)}
                   </select>
                 </div>
               </div>
               <div className="mb-6">
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">Security Answer</label>
+                <label className="block text-xs font-semibold text-foreground mb-1.5">Security Answer</label>
                 <div className="relative">
-                  <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <input value={securityAnswer} onChange={(e) => setSecurityAnswer(e.target.value)}
                     placeholder="Used if you forget your password" onKeyDown={(e) => e.key === 'Enter' && doRegister()} className={inputCls} />
                 </div>
-                <p className="mt-1.5 text-[11px] text-slate-500">You&apos;ll answer this to reset your password if you forget it.</p>
+                <p className="mt-1.5 text-[11px] text-muted-foreground">You&apos;ll answer this to reset your password if you forget it.</p>
               </div>
               <button onClick={doRegister} disabled={loading}
                 className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-semibold disabled:opacity-60 flex items-center justify-center gap-2 shadow-sm hover:opacity-95 transition">
@@ -440,7 +440,7 @@ function AuthScreen({
           )}
 
           {!forgot && (
-            <div className="mt-6 p-3 bg-primary/5 border border-primary/15 rounded-xl text-xs text-slate-700 flex gap-2">
+            <div className="mt-6 p-3 bg-primary/5 border border-primary/15 rounded-xl text-xs text-foreground flex gap-2">
               <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
               <span>
                 {view === 'login'
@@ -451,7 +451,7 @@ function AuthScreen({
           )}
 
           <div className="mt-4 text-center">
-            <a href="/" className="text-xs text-slate-500 hover:text-primary inline-flex items-center gap-1 transition">
+            <a href="/" className="text-xs text-muted-foreground hover:text-primary inline-flex items-center gap-1 transition">
               <ArrowLeft className="w-3 h-3" /> Back to home
             </a>
           </div>
@@ -465,15 +465,15 @@ function AuthScreen({
 function MaintenanceScreen({ message }: { message?: string | null }) {
   return (
     <div className="min-h-screen geo-surface grid place-items-center p-6">
-      <div className="bg-white rounded-2xl p-8 text-center max-w-sm shadow-sm border border-slate-200">
+      <div className="bg-card rounded-2xl p-8 text-center max-w-sm shadow-sm border border-border">
         <div className="w-16 h-16 rounded-2xl bg-amber-100 grid place-items-center mx-auto mb-4">
           <Clock className="w-8 h-8 text-amber-600" />
         </div>
-        <h1 className="text-lg font-bold text-slate-900">System Under Maintenance</h1>
-        <p className="text-sm text-slate-500 mt-2">
+        <h1 className="text-lg font-bold text-foreground">System Under Maintenance</h1>
+        <p className="text-sm text-muted-foreground mt-2">
           {message || 'We are performing scheduled maintenance. Please check back shortly.'}
         </p>
-        <a href="/" className="inline-block mt-5 text-xs text-slate-500 hover:text-primary">Back to home</a>
+        <a href="/" className="inline-block mt-5 text-xs text-muted-foreground hover:text-primary">Back to home</a>
       </div>
     </div>
   )
@@ -508,27 +508,27 @@ function ForceChangePassword({ onDone }: { onDone: () => Promise<void> }) {
     }
   }
 
-  const inputCls = 'w-full rounded-xl border border-slate-300 pl-9 pr-10 py-2.5 text-sm outline-none focus:border-primary'
+  const inputCls = 'w-full rounded-xl border border-border pl-9 pr-10 py-2.5 text-sm outline-none focus:border-primary'
   return (
     <div className="min-h-screen geo-surface grid place-items-center p-6">
-      <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-sm border border-slate-200">
+      <div className="bg-card rounded-2xl p-6 max-w-sm w-full shadow-sm border border-border">
         <div className="w-12 h-12 rounded-xl bg-primary/10 grid place-items-center mx-auto mb-3">
           <KeyRound className="w-6 h-6 text-primary" />
         </div>
-        <h1 className="text-base font-bold text-slate-900 text-center">Set a New Password</h1>
-        <p className="text-xs text-slate-500 text-center mt-1 mb-4">
+        <h1 className="text-base font-bold text-foreground text-center">Set a New Password</h1>
+        <p className="text-xs text-muted-foreground text-center mt-1 mb-4">
           Your password was reset by an administrator. Choose a new one to continue.
         </p>
         <div className="space-y-3">
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input type={show ? 'text' : 'password'} value={pw} onChange={(e) => setPw(e.target.value)} placeholder="New password" className={inputCls} />
-            <button type="button" onClick={() => setShow((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+            <button type="button" onClick={() => setShow((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
               {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input type={show ? 'text' : 'password'} value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="Confirm new password" className={inputCls} onKeyDown={(e) => e.key === 'Enter' && submit()} />
           </div>
           {error && <p className="text-xs text-red-600">{error}</p>}
@@ -648,7 +648,7 @@ function AppShell({ user, refresh }: { user: MeUser; refresh: () => Promise<any>
   return (
     <div className="min-h-screen geo-surface">
       <div className="phone-shell">
-        <div className="bg-white relative">
+        <div className="bg-card relative">
           <div className="flex items-center justify-between px-5 pt-4 pb-3">
             <BrandLogo height={32} />
             <button
@@ -670,7 +670,7 @@ function AppShell({ user, refresh }: { user: MeUser; refresh: () => Promise<any>
           </div>
         </div>
 
-        <div className="flex justify-between px-4 py-3 bg-white border-b border-slate-200">
+        <div className="flex justify-between px-4 py-3 bg-card border-b border-border">
           {steps.map((s, i) => (
             <div key={s} className="flex flex-col items-center text-[9px]">
               <div
@@ -679,12 +679,12 @@ function AppShell({ user, refresh }: { user: MeUser; refresh: () => Promise<any>
                     ? 'bg-primary text-primary-foreground'
                     : i === currentStep
                     ? 'bg-primary text-primary-foreground ring-2 ring-primary/30'
-                    : 'bg-slate-100 text-slate-400'
+                    : 'bg-muted text-muted-foreground'
                 }`}
               >
                 {i < currentStep ? <CheckCircle2 className="w-3.5 h-3.5" /> : i + 1}
               </div>
-              <span className={`mt-1 ${i === currentStep ? 'text-primary font-semibold' : 'text-slate-400'}`}>{s}</span>
+              <span className={`mt-1 ${i === currentStep ? 'text-primary font-semibold' : 'text-muted-foreground'}`}>{s}</span>
             </div>
           ))}
         </div>
@@ -692,9 +692,9 @@ function AppShell({ user, refresh }: { user: MeUser; refresh: () => Promise<any>
         <div className="p-4 min-h-[500px]">
           {screen === 'kyc' && <KYCScreen user={user} settings={settings} onDone={async () => { await refresh(); await loadData() }} />}
           {screen === 'kyc_pending' && <KYCPendingScreen user={user} onApproved={async () => { await refresh(); await loadData() }} />}
-          {screen === 'loan_select' && <LoanSelectScreen user={user} settings={settings} onLoan={async () => { await refresh(); await loadData() }} />}
+          {screen === 'loan_select' && <LoanSelectScreen user={user} settings={settings} currentLoan={loan} onLoan={async () => { await refresh(); await loadData() }} />}
           {screen === 'wallet' && loan && (
-            <WalletScreen user={user} loan={loan} settings={settings} onAttemptWithdraw={() => setScreen('down_payment')} />
+            <WalletScreen user={user} loan={loan} settings={settings} onAttemptWithdraw={() => setScreen('down_payment')} onChangeLoan={() => setScreen('loan_select')} />
           )}
           {screen === 'down_payment' && loan && (
             <DownPaymentScreen loan={loan} settings={settings} onSubmitted={() => loadData()} onBack={() => setScreen('wallet')} />
@@ -714,14 +714,14 @@ function AppShell({ user, refresh }: { user: MeUser; refresh: () => Promise<any>
           )}
         </div>
 
-        <div className="border-t border-slate-200 p-3 flex items-center justify-between bg-white">
+        <div className="border-t border-border p-3 flex items-center justify-between bg-card">
           <button
             onClick={async () => { await fetch('/api/auth/logout', { method: 'POST' }); window.location.href = '/app' }}
-            className="text-xs text-slate-500 hover:text-red-600 inline-flex items-center gap-1 transition"
+            className="text-xs text-muted-foreground hover:text-red-600 inline-flex items-center gap-1 transition"
           >
             <LogOut className="w-3.5 h-3.5" /> Logout
           </button>
-          <a href="/" className="text-xs text-slate-500 hover:text-primary inline-flex items-center gap-1 transition">
+          <a href="/" className="text-xs text-muted-foreground hover:text-primary inline-flex items-center gap-1 transition">
             <Home className="w-3.5 h-3.5" /> Home
           </a>
         </div>
@@ -871,7 +871,7 @@ function KYCScreen({ user, settings, onDone }: { user: MeUser; settings: Setting
   return (
     <div>
       <SectionTitle Icon={ClipboardList} title="Registration & KYC Verification" />
-      <p className="text-xs text-slate-600 mb-4 mt-2">Please fill in your details to verify your identity.</p>
+      <p className="text-xs text-muted-foreground mb-4 mt-2">Please fill in your details to verify your identity.</p>
 
       {user.kycStatus === 'REJECTED' && (
         <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 flex gap-2">
@@ -916,7 +916,7 @@ function KYCScreen({ user, settings, onDone }: { user: MeUser; settings: Setting
       </div>
 
       <SectionTitle Icon={Camera} title="CNIC Upload" className="mt-6" />
-      <p className="text-[11px] text-slate-500 mt-1.5">
+      <p className="text-[11px] text-muted-foreground mt-1.5">
         Take clear, well-lit photos of your CNIC (front &amp; back) and a selfie using your camera. We auto-check what we can; our team verifies the rest.
       </p>
       <div className="grid grid-cols-2 gap-2 mt-3">
@@ -966,9 +966,12 @@ function KYCPendingScreen({ user, onApproved }: { user: MeUser; onApproved: () =
   return <KycVerifying userName={user.fullName || 'there'} elapsed={elapsed} />
 }
 
-function LoanSelectScreen({ user, settings, onLoan }: { user: MeUser; settings: Settings | null; onLoan: () => Promise<void> }) {
-  const [selected, setSelected] = useState<number | null>(null)
+function LoanSelectScreen({ user, settings, currentLoan, onLoan }: {
+  user: MeUser; settings: Settings | null; currentLoan?: Loan | null; onLoan: () => Promise<void>
+}) {
+  const [selected, setSelected] = useState<number | null>(currentLoan?.amount ?? null)
   const [submitting, setSubmitting] = useState(false)
+  const isChanging = Boolean(currentLoan)
 
   const packages: number[] = settings ? JSON.parse(settings.loanPackages) : [8000, 14000, 18500, 24000]
   const baseMarkup = settings?.markupPercent ?? 5
@@ -982,6 +985,10 @@ function LoanSelectScreen({ user, settings, onLoan }: { user: MeUser; settings: 
     return { total, weekly: total / 4 }
   }
 
+  useEffect(() => {
+    if (currentLoan) setSelected(currentLoan.amount)
+  }, [currentLoan?.id, currentLoan?.amount])
+
   const submit = async () => {
     if (selected === null) return toast.error('Please select a loan package')
     setSubmitting(true)
@@ -993,7 +1000,7 @@ function LoanSelectScreen({ user, settings, onLoan }: { user: MeUser; settings: 
       })
       const d = await r.json()
       if (!r.ok) return toast.error(d.error || 'Failed')
-      toast.success('Loan approved! Amount credited to your wallet.')
+      toast.success(isChanging ? 'Loan amount updated.' : 'Loan approved! Amount credited to your wallet.')
       await onLoan()
     } finally {
       setSubmitting(false)
@@ -1007,7 +1014,7 @@ function LoanSelectScreen({ user, settings, onLoan }: { user: MeUser; settings: 
           <BadgeCheck className="w-6 h-6 text-white" />
         </span>
         <h2 className="font-bold text-primary mt-2">KYC Verified!</h2>
-        <p className="text-xs text-slate-600 mt-1">You are eligible for a personal loan.</p>
+        <p className="text-xs text-muted-foreground mt-1">You are eligible for a personal loan.</p>
       </div>
 
       {isLoyal && (
@@ -1019,7 +1026,14 @@ function LoanSelectScreen({ user, settings, onLoan }: { user: MeUser; settings: 
         </div>
       )}
 
-      <SectionTitle Icon={Banknote} title="Select Your Loan Amount" />
+      {isChanging && (
+        <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs text-amber-800 flex gap-2">
+          <RefreshCw className="w-4 h-4 shrink-0 mt-0.5" />
+          <span>You can change the loan amount before submitting any payment for review.</span>
+        </div>
+      )}
+
+      <SectionTitle Icon={Banknote} title={isChanging ? 'Change Your Loan Amount' : 'Select Your Loan Amount'} />
 
       <div className="space-y-2 mt-3">
         {packages.map((amt) => {
@@ -1028,19 +1042,24 @@ function LoanSelectScreen({ user, settings, onLoan }: { user: MeUser; settings: 
             <button
               key={amt}
               onClick={() => setSelected(amt)}
-              className={`w-full text-left p-4 rounded-2xl border-2 transition ${
-                selected === amt ? 'border-primary bg-primary/5 ring-2 ring-primary/15' : 'border-slate-200 hover:border-primary/50'
+              className={`w-full text-left p-4 rounded-2xl border-2 cursor-pointer transition ${
+                selected === amt ? 'border-primary bg-primary/5 ring-2 ring-primary/15' : 'border-border hover:border-primary/50'
               }`}
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="font-bold text-primary text-lg">PKR {amt.toLocaleString()}</div>
-                  <div className="text-[11px] text-slate-600 mt-0.5">1 Month · 4 Weekly Installments</div>
+                  <div className="font-bold text-primary text-lg flex items-center gap-2">
+                    PKR {amt.toLocaleString()}
+                    {currentLoan?.amount === amt && (
+                      <span className="text-[9px] rounded-full bg-primary/10 text-primary px-2 py-0.5 border border-primary/15">Current</span>
+                    )}
+                  </div>
+                  <div className="text-[11px] text-muted-foreground mt-0.5">1 Month · 4 Weekly Installments</div>
                   <div className="text-[11px] text-amber-600 font-semibold mt-0.5">Markup: {markup}% only</div>
                 </div>
                 <div className="text-right text-[11px]">
-                  <div className="text-slate-700">Total: <strong>PKR {Math.round(c.total).toLocaleString()}</strong></div>
-                  <div className="text-slate-500 mt-0.5">PKR {Math.round(c.weekly).toLocaleString()}/week</div>
+                  <div className="text-foreground">Total: <strong>PKR {Math.round(c.total).toLocaleString()}</strong></div>
+                  <div className="text-muted-foreground mt-0.5">PKR {Math.round(c.weekly).toLocaleString()}/week</div>
                 </div>
               </div>
             </button>
@@ -1049,14 +1068,14 @@ function LoanSelectScreen({ user, settings, onLoan }: { user: MeUser; settings: 
       </div>
 
       {selected !== null && (
-        <div className="mt-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl">
-          <div className="text-xs font-semibold text-slate-700 mb-2 flex items-center gap-1.5">
+        <div className="mt-3 p-4 bg-muted border border-border rounded-2xl">
+          <div className="text-xs font-semibold text-foreground mb-2 flex items-center gap-1.5">
             <ListChecks className="w-4 h-4 text-primary" /> Installment Plan (4 Weeks)
           </div>
           {Array.from({ length: 4 }, (_, i) => (
-            <div key={i} className="flex justify-between text-xs py-1.5 border-b border-slate-200 last:border-0">
-              <span className="text-slate-600">Week {i + 1}</span>
-              <span className="font-semibold text-slate-900">PKR {Math.round(calc(selected).weekly).toLocaleString()}</span>
+            <div key={i} className="flex justify-between text-xs py-1.5 border-b border-border last:border-0">
+              <span className="text-muted-foreground">Week {i + 1}</span>
+              <span className="font-semibold text-foreground">PKR {Math.round(calc(selected).weekly).toLocaleString()}</span>
             </div>
           ))}
         </div>
@@ -1068,7 +1087,7 @@ function LoanSelectScreen({ user, settings, onLoan }: { user: MeUser; settings: 
         className="w-full mt-4 bg-primary text-primary-foreground py-3 rounded-xl font-semibold disabled:opacity-60 flex items-center justify-center gap-2 shadow-sm hover:opacity-95 transition"
       >
         {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
-        Confirm Loan
+        {isChanging ? 'Update Loan Amount' : 'Confirm Loan'}
       </button>
     </div>
   )
@@ -1110,7 +1129,7 @@ function BankLogo({ slug, name, size = 24 }: { slug: string; name: string; size?
   }
   return (
     <img src={`/banks/${slug}.png`} alt="" onError={() => setErr(true)}
-      className="rounded-md object-contain bg-white border border-slate-100 shrink-0" style={{ width: size, height: size }} />
+      className="rounded-md object-contain bg-card border border-border shrink-0" style={{ width: size, height: size }} />
   )
 }
 
@@ -1122,32 +1141,32 @@ function BankSelect({ value, onChange }: { value: string; onChange: (b: string) 
   const list = PAKISTANI_BANKS.filter((b) => b.name.toLowerCase().includes(q.toLowerCase()))
   return (
     <div className="mt-3">
-      <label className="block text-xs font-semibold text-slate-700 mb-1.5">Select Bank</label>
+      <label className="block text-xs font-semibold text-foreground mb-1.5">Select Bank</label>
       <button type="button" onClick={() => setOpen(true)}
-        className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm hover:border-primary transition">
+        className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-border bg-card text-sm hover:border-primary transition">
         {selected ? (
-          <><BankLogo slug={selected.slug} name={selected.name} /><span className="text-slate-800">{selected.name}</span></>
+          <><BankLogo slug={selected.slug} name={selected.name} /><span className="text-foreground">{selected.name}</span></>
         ) : (
-          <span className="text-slate-400">Choose your bank…</span>
+          <span className="text-muted-foreground">Choose your bank…</span>
         )}
-        <ChevronDown className="w-4 h-4 text-slate-400 ml-auto shrink-0" />
+        <ChevronDown className="w-4 h-4 text-muted-foreground ml-auto shrink-0" />
       </button>
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div className="relative z-50">
-            <div className="absolute mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
-              <div className="p-2 border-b border-slate-100">
+            <div className="absolute mt-1 w-full bg-card border border-border rounded-xl shadow-lg overflow-hidden">
+              <div className="p-2 border-b border-border">
                 <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search bank…"
-                  className="w-full px-2.5 py-1.5 rounded-lg border border-slate-200 text-sm outline-none focus:border-primary" />
+                  className="w-full px-2.5 py-1.5 rounded-lg border border-border text-sm outline-none focus:border-primary" />
               </div>
               <div className="max-h-56 overflow-y-auto">
-                {list.length === 0 && <div className="px-3 py-3 text-xs text-slate-400 text-center">No bank found</div>}
+                {list.length === 0 && <div className="px-3 py-3 text-xs text-muted-foreground text-center">No bank found</div>}
                 {list.map((b) => (
                   <button type="button" key={b.slug} onClick={() => { onChange(b.name); setOpen(false); setQ('') }}
                     className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm text-left hover:bg-primary/5 transition ${value === b.name ? 'bg-primary/5' : ''}`}>
                     <BankLogo slug={b.slug} name={b.name} />
-                    <span className="text-slate-700">{b.name}</span>
+                    <span className="text-foreground">{b.name}</span>
                     {value === b.name && <CheckCircle2 className="w-4 h-4 text-primary ml-auto shrink-0" />}
                   </button>
                 ))}
@@ -1171,15 +1190,15 @@ function MethodPicker({ method, setMethod, bank, setBank }: {
             key={m.id}
             onClick={() => setMethod(m.id)}
             className={`p-3 rounded-xl border-2 text-center transition ${
-              method === m.id ? 'border-primary bg-primary/5 ring-2 ring-primary/15' : 'border-slate-200 hover:border-primary/50'
+              method === m.id ? 'border-primary bg-primary/5 ring-2 ring-primary/15' : 'border-border hover:border-primary/50'
             }`}
           >
             {'img' in m && m.img ? (
               <img src={m.img} alt={m.name} className="h-6 w-auto mx-auto object-contain" />
             ) : (
-              <m.Icon className={`w-6 h-6 mx-auto ${method === m.id ? 'text-primary' : 'text-slate-500'}`} />
+              <m.Icon className={`w-6 h-6 mx-auto ${method === m.id ? 'text-primary' : 'text-muted-foreground'}`} />
             )}
-            <div className="text-[11px] font-semibold mt-1.5 text-slate-700">{m.name}</div>
+            <div className="text-[11px] font-semibold mt-1.5 text-foreground">{m.name}</div>
           </button>
         ))}
       </div>
@@ -1189,8 +1208,8 @@ function MethodPicker({ method, setMethod, bank, setBank }: {
   )
 }
 
-function WalletScreen({ user, loan, settings, onAttemptWithdraw }: {
-  user: MeUser; loan: Loan; settings: Settings | null; onAttemptWithdraw: () => void
+function WalletScreen({ user, loan, settings, onAttemptWithdraw, onChangeLoan }: {
+  user: MeUser; loan: Loan; settings: Settings | null; onAttemptWithdraw: () => void; onChangeLoan: () => void
 }) {
   const [method, setMethod] = useState('')
   const [account, setAccount] = useState('')
@@ -1206,23 +1225,36 @@ function WalletScreen({ user, loan, settings, onAttemptWithdraw }: {
         <div className="text-xs text-white/85">Loan Status: <strong>Active</strong></div>
       </div>
 
-      <div className="mt-3 p-3 bg-primary/5 border border-primary/15 rounded-xl text-xs text-slate-700 flex gap-2">
+      <div className="mt-3 p-3 bg-primary/5 border border-primary/15 rounded-xl text-xs text-foreground flex gap-2">
         <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
         <span>Your loan has been deposited. To withdraw, please pay the 12% down payment first.</span>
+      </div>
+
+      <div className="mt-3 p-3 rounded-xl border border-border bg-muted flex items-center justify-between gap-3">
+        <div>
+          <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Selected Loan</div>
+          <div className="text-sm font-bold text-foreground">PKR {Math.round(loan.amount).toLocaleString()}</div>
+        </div>
+        <button
+          onClick={onChangeLoan}
+          className="shrink-0 px-3 py-2 rounded-lg bg-card border border-primary/25 text-primary text-xs font-semibold hover:bg-primary/5 transition inline-flex items-center gap-1.5 cursor-pointer"
+        >
+          <RefreshCw className="w-3.5 h-3.5" /> Change
+        </button>
       </div>
 
       <SectionTitle Icon={Send} title="Withdraw Funds" className="mt-5" />
       <MethodPicker method={method} setMethod={setMethod} bank={bank} setBank={setBank} />
 
       <div className="mt-3">
-        <label className="block text-xs font-semibold text-slate-700 mb-1.5">Account Number</label>
+        <label className="block text-xs font-semibold text-foreground mb-1.5">Account Number</label>
         <input
           value={account}
           onChange={(e) => setAccount(normalizeAccount(e.target.value))}
           placeholder="Account number or IBAN"
           inputMode="text"
           maxLength={34}
-          className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none text-sm transition"
+          className="w-full px-3 py-2.5 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none text-sm transition"
         />
         {account.length > 0 && !isValidAccount(account) && (
           <p className="mt-1 text-[11px] text-amber-600">Enter a valid account number (10–34 characters)</p>
@@ -1244,19 +1276,19 @@ function WalletScreen({ user, loan, settings, onAttemptWithdraw }: {
       <SectionTitle Icon={ListChecks} title="Repayment Schedule" className="mt-6" />
       <div className="mt-3 space-y-1">
         {loan.installments.map((inst) => (
-          <div key={inst.id} className="flex items-center gap-3 p-2.5 border-b border-slate-100 last:border-0">
+          <div key={inst.id} className="flex items-center gap-3 p-2.5 border-b border-border last:border-0">
             <div className={`w-6 h-6 rounded-full grid place-items-center text-[10px] font-bold ${
-              inst.status === 'PAID' ? 'bg-emerald-600 text-white' : inst.weekNumber === 1 ? 'bg-amber-500 text-white' : 'bg-slate-100 text-slate-500'
+              inst.status === 'PAID' ? 'bg-emerald-600 text-white' : inst.weekNumber === 1 ? 'bg-amber-500 text-white' : 'bg-muted text-muted-foreground'
             }`}>
               {inst.status === 'PAID' ? <CheckCircle2 className="w-3.5 h-3.5" /> : inst.weekNumber}
             </div>
             <div className="flex-1">
-              <div className="text-xs font-semibold text-slate-800">Week {inst.weekNumber} Installment</div>
-              <div className="text-[10px] text-slate-500">
+              <div className="text-xs font-semibold text-foreground">Week {inst.weekNumber} Installment</div>
+              <div className="text-[10px] text-muted-foreground">
                 {inst.status === 'PAID' ? 'Completed' : inst.weekNumber === 1 ? 'Due now (advance)' : `Due in ${inst.weekNumber * 7} days`}
               </div>
             </div>
-            <div className="text-xs font-bold text-slate-900">PKR {Math.round(inst.amount).toLocaleString()}</div>
+            <div className="text-xs font-bold text-foreground">PKR {Math.round(inst.amount).toLocaleString()}</div>
           </div>
         ))}
       </div>
@@ -1295,7 +1327,7 @@ function DownPaymentScreen({ loan, settings, onSubmitted, onBack }: {
 
   return (
     <div>
-      <button onClick={onBack} className="text-xs text-slate-500 hover:text-primary inline-flex items-center gap-1 mb-3 transition">
+      <button onClick={onBack} className="text-xs text-muted-foreground hover:text-primary inline-flex items-center gap-1 mb-3 transition">
         <ArrowLeft className="w-3 h-3" /> Back
       </button>
       <SectionTitle Icon={AlertCircle} title="Down Payment Required" />
@@ -1309,24 +1341,24 @@ function DownPaymentScreen({ loan, settings, onSubmitted, onBack }: {
         <div className="text-xs font-semibold text-amber-700 mb-2 flex items-center gap-1.5">
           <CreditCard className="w-4 h-4" /> Down Payment Details
         </div>
-        <div className="bg-white rounded-xl p-3 space-y-1.5 border border-amber-100">
+        <div className="bg-card rounded-xl p-3 space-y-1.5 border border-amber-100">
           <Row label="Loan Amount" value={`PKR ${Math.round(loan.amount).toLocaleString()}`} />
           <Row label={`Down Payment (${settings?.downPaymentPercent ?? 12}%)`} value={`PKR ${Math.round(downPayment).toLocaleString()}`} valueClass="text-amber-600 font-bold text-base" />
         </div>
       </div>
 
       <SectionTitle Icon={Building2} title="Company Payment Account" className="mt-5" />
-      <div className="mt-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl">
-        <div className="text-xs font-semibold text-slate-700 mb-2">Send payment to this account:</div>
-        <div className="bg-white rounded-xl p-3 space-y-1.5 border border-slate-100">
-          <Row label="Account Title" value={settings?.accountTitle || 'GEO Loan (Pvt) Ltd'} />
+      <div className="mt-3 p-4 bg-muted border border-border rounded-2xl">
+        <div className="text-xs font-semibold text-foreground mb-2">Send payment to this account:</div>
+        <div className="bg-card rounded-xl p-3 space-y-1.5 border border-border">
+          <Row label="Account Title" value={settings?.accountTitle || 'Smart Qarz (Pvt) Ltd'} />
           <Row label="Bank" value={settings?.bankName || 'HBL'} />
           <CopyRow label="Account Number" value={settings?.accountNumber || '1234-5678-9012-3456'} />
           <CopyRow label="EasyPaisa / JazzCash" value={settings?.mobileAccount || '0300-1234567'} />
         </div>
       </div>
 
-      <div className="mt-3 p-3 bg-primary/5 border border-primary/15 rounded-xl text-xs text-slate-700 flex gap-2">
+      <div className="mt-3 p-3 bg-primary/5 border border-primary/15 rounded-xl text-xs text-foreground flex gap-2">
         <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
         <span>Send the exact amount, then upload the payment screenshot below.</span>
       </div>
@@ -1391,32 +1423,32 @@ function PendingScreen({ pending, onResolved }: { pending: PendingPayment; onRes
         </span>
       </div>
 
-      <h2 className="font-bold text-lg mt-5 text-slate-900">Verifying your {label}</h2>
-      <p className="text-sm text-slate-600 mt-1">Our team is reviewing your payment screenshot.</p>
+      <h2 className="font-bold text-lg mt-5 text-foreground">Verifying your {label}</h2>
+      <p className="text-sm text-muted-foreground mt-1">Our team is reviewing your payment screenshot.</p>
 
       <div className="mt-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/5 border border-primary/15 text-primary font-mono text-sm font-semibold">
         <Clock className="w-4 h-4" /> {mm}:{ss}
       </div>
 
-      <div className="mt-5 h-2 rounded-full bg-slate-100 overflow-hidden">
+      <div className="mt-5 h-2 rounded-full bg-muted overflow-hidden">
         <div className="h-full geo-gradient rounded-full transition-all duration-1000 ease-out" style={{ width: `${progress}%` }} />
       </div>
 
       <div className="mt-4 space-y-2 text-left max-w-xs mx-auto">
         {steps.map((s, i) => (
-          <div key={s} className={`flex items-center gap-2.5 text-sm transition ${i < stepIdx ? 'text-emerald-600' : i === stepIdx ? 'text-slate-900 font-medium' : 'text-slate-400'}`}>
+          <div key={s} className={`flex items-center gap-2.5 text-sm transition ${i < stepIdx ? 'text-emerald-600' : i === stepIdx ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
             {i < stepIdx ? <CheckCircle2 className="w-4 h-4 shrink-0" />
               : i === stepIdx ? <Loader2 className="w-4 h-4 shrink-0 animate-spin text-primary" />
-              : <span className="w-4 h-4 shrink-0 rounded-full border border-slate-300" />}
+              : <span className="w-4 h-4 shrink-0 rounded-full border border-border" />}
             {s}
           </div>
         ))}
       </div>
 
-      <div className="mt-6 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-slate-700">
+      <div className="mt-6 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-foreground">
         Amount: <strong>PKR {Math.round(pending.amount).toLocaleString()}</strong> · Status: <span className="font-semibold text-amber-700">PENDING REVIEW</span>
       </div>
-      <p className="text-[11px] text-slate-400 mt-3">Please keep this page open — it updates automatically.</p>
+      <p className="text-[11px] text-muted-foreground mt-3">Please keep this page open — it updates automatically.</p>
     </div>
   )
 }
@@ -1468,15 +1500,15 @@ function InstallmentPaymentScreen({ loan, settings, onSubmitted }: {
         <div className="text-xs font-semibold text-amber-700 mb-2 flex items-center gap-1.5">
           <CreditCard className="w-4 h-4" /> 1st Installment Payment
         </div>
-        <div className="bg-white rounded-xl p-3 border border-amber-100">
+        <div className="bg-card rounded-xl p-3 border border-amber-100">
           <Row label="Installment Amount" value={`PKR ${Math.round(installmentAmount).toLocaleString()}`} valueClass="text-amber-600 font-bold text-base" />
         </div>
       </div>
 
-      <div className="mt-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl">
-        <div className="text-xs font-semibold text-slate-700 mb-2">Send to the same account:</div>
-        <div className="bg-white rounded-xl p-3 space-y-1.5 border border-slate-100">
-          <CopyRow label="Account Title" value={settings?.accountTitle || 'GEO Loan (Pvt) Ltd'} />
+      <div className="mt-3 p-4 bg-muted border border-border rounded-2xl">
+        <div className="text-xs font-semibold text-foreground mb-2">Send to the same account:</div>
+        <div className="bg-card rounded-xl p-3 space-y-1.5 border border-border">
+          <CopyRow label="Account Title" value={settings?.accountTitle || 'Smart Qarz (Pvt) Ltd'} />
           <CopyRow label="Account Number" value={settings?.accountNumber || '1234-5678-9012-3456'} />
           <CopyRow label="EasyPaisa / JazzCash" value={settings?.mobileAccount || '0300-1234567'} />
         </div>
@@ -1508,7 +1540,7 @@ function WdRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center gap-2">
       <span className="text-muted-foreground w-24 shrink-0">{label}</span>
-      <span className="font-semibold text-slate-900 break-all">{value}</span>
+      <span className="font-semibold text-foreground break-all">{value}</span>
     </div>
   )
 }
@@ -1584,7 +1616,7 @@ function WithdrawReadyScreen({ loan, onWithdrawn }: {
             <CheckCircle2 className="w-8 h-8 text-emerald-600" />
           </span>
           <h2 className="font-bold text-emerald-700 text-lg mt-2">Money Sent!</h2>
-          <p className="text-xs text-slate-600 mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             PKR {Math.round(wd.amount).toLocaleString()} sent to your {methodName(wd)} account.
           </p>
         </div>
@@ -1597,7 +1629,7 @@ function WithdrawReadyScreen({ loan, onWithdrawn }: {
         <div className="mt-3 rounded-2xl border border-emerald-200 bg-card p-4">
           <div className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">Transaction ID</div>
           <div className="flex items-center justify-between gap-2 mt-1">
-            <span className="font-bold text-slate-900 break-all">{wd.transactionId}</span>
+            <span className="font-bold text-foreground break-all">{wd.transactionId}</span>
             <button
               onClick={() => { navigator.clipboard?.writeText(wd.transactionId || '').then(() => toast.success('Copied')).catch(() => {}) }}
               className="shrink-0 inline-flex items-center gap-1 text-xs text-primary font-semibold hover:underline"
@@ -1605,7 +1637,7 @@ function WithdrawReadyScreen({ loan, onWithdrawn }: {
               <Copy className="w-3.5 h-3.5" /> Copy
             </button>
           </div>
-          <p className="text-[11px] text-slate-500 mt-1.5">Keep this ID as proof of your payout.</p>
+          <p className="text-[11px] text-muted-foreground mt-1.5">Keep this ID as proof of your payout.</p>
         </div>
         <button
           onClick={onWithdrawn}
@@ -1626,7 +1658,7 @@ function WithdrawReadyScreen({ loan, onWithdrawn }: {
             <Loader2 className="w-7 h-7 text-amber-600 animate-spin" />
           </span>
           <h2 className="font-bold text-amber-700 text-lg mt-2">Withdrawal Processing</h2>
-          <p className="text-xs text-slate-600 mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             Our team is sending PKR {Math.round(wd.amount).toLocaleString()} to your {methodName(wd)} account.
             You&apos;ll get the Transaction ID here as soon as it&apos;s sent.
           </p>
@@ -1638,7 +1670,7 @@ function WithdrawReadyScreen({ loan, onWithdrawn }: {
           <WdRow label="Account title" value={wd.accountTitle} />
           <WdRow label="Requested" value={new Date(wd.createdAt).toLocaleString('en-PK', { dateStyle: 'short', timeStyle: 'short' })} />
         </div>
-        <div className="mt-3 flex items-center justify-center gap-2 text-[11px] text-slate-500">
+        <div className="mt-3 flex items-center justify-center gap-2 text-[11px] text-muted-foreground">
           <Clock className="w-3.5 h-3.5" /> This page updates automatically.
         </div>
       </div>
@@ -1654,8 +1686,8 @@ function WithdrawReadyScreen({ loan, onWithdrawn }: {
             <AlertCircle className="w-8 h-8 text-red-600" />
           </span>
           <h2 className="font-bold text-red-700 text-lg mt-2">Withdrawal Rejected</h2>
-          {wd.adminNote && <p className="text-xs text-slate-600 mt-1">Reason: {wd.adminNote}</p>}
-          <p className="text-xs text-slate-600 mt-1">
+          {wd.adminNote && <p className="text-xs text-muted-foreground mt-1">Reason: {wd.adminNote}</p>}
+          <p className="text-xs text-muted-foreground mt-1">
             PKR {Math.round(wd.amount).toLocaleString()} has been returned to your wallet.
           </p>
         </div>
@@ -1677,7 +1709,7 @@ function WithdrawReadyScreen({ loan, onWithdrawn }: {
           <BadgeCheck className="w-6 h-6 text-white" />
         </span>
         <h2 className="font-bold text-primary mt-2">Withdrawal Unlocked!</h2>
-        <p className="text-xs text-slate-600 mt-1">Enter your account details — our team will send the money and share a Transaction ID.</p>
+        <p className="text-xs text-muted-foreground mt-1">Enter your account details — our team will send the money and share a Transaction ID.</p>
       </div>
 
       <div className="geo-gradient-emerald text-white rounded-2xl p-5 text-center mt-3 shadow-sm">
@@ -1691,26 +1723,26 @@ function WithdrawReadyScreen({ loan, onWithdrawn }: {
 
       <div className="mt-3 space-y-3">
         <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1.5">Account Number</label>
+          <label className="block text-xs font-semibold text-foreground mb-1.5">Account Number</label>
           <input
             value={account}
             onChange={(e) => setAccount(normalizeAccount(e.target.value))}
             placeholder="Account number or IBAN"
             inputMode="text"
             maxLength={34}
-            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none text-sm transition"
+            className="w-full px-3 py-2.5 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none text-sm transition"
           />
           {account.length > 0 && !isValidAccount(account) && (
             <p className="mt-1 text-[11px] text-amber-600">Enter a valid account number (10–34 characters)</p>
           )}
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1.5">Account Title</label>
+          <label className="block text-xs font-semibold text-foreground mb-1.5">Account Title</label>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter account title"
-            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none text-sm transition"
+            className="w-full px-3 py-2.5 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none text-sm transition"
           />
         </div>
       </div>
@@ -1727,19 +1759,19 @@ function WithdrawReadyScreen({ loan, onWithdrawn }: {
       <SectionTitle Icon={ListChecks} title="Remaining Installments" className="mt-6" />
       <div className="mt-3 space-y-1">
         {loan.installments.map((inst) => (
-          <div key={inst.id} className="flex items-center gap-3 p-2.5 border-b border-slate-100 last:border-0">
+          <div key={inst.id} className="flex items-center gap-3 p-2.5 border-b border-border last:border-0">
             <div className={`w-6 h-6 rounded-full grid place-items-center text-[10px] font-bold ${
-              inst.status === 'PAID' ? 'bg-emerald-600 text-white' : inst.weekNumber === 2 ? 'bg-amber-500 text-white' : 'bg-slate-100 text-slate-500'
+              inst.status === 'PAID' ? 'bg-emerald-600 text-white' : inst.weekNumber === 2 ? 'bg-amber-500 text-white' : 'bg-muted text-muted-foreground'
             }`}>
               {inst.status === 'PAID' ? <CheckCircle2 className="w-3.5 h-3.5" /> : inst.weekNumber}
             </div>
             <div className="flex-1">
-              <div className="text-xs font-semibold text-slate-800">Week {inst.weekNumber}{inst.status === 'PAID' ? ' (Paid)' : ''}</div>
-              <div className="text-[10px] text-slate-500">
+              <div className="text-xs font-semibold text-foreground">Week {inst.weekNumber}{inst.status === 'PAID' ? ' (Paid)' : ''}</div>
+              <div className="text-[10px] text-muted-foreground">
                 {inst.status === 'PAID' ? 'Completed' : inst.weekNumber === 2 ? 'Upcoming' : 'Scheduled'}
               </div>
             </div>
-            <div className="text-xs font-bold text-slate-900">PKR {Math.round(inst.amount).toLocaleString()}</div>
+            <div className="text-xs font-bold text-foreground">PKR {Math.round(inst.amount).toLocaleString()}</div>
           </div>
         ))}
       </div>
@@ -1783,7 +1815,7 @@ function RepayScreen({ loan, settings, outstanding, onSubmitted, onBack }: {
 
   return (
     <div>
-      <button onClick={onBack} className="text-xs text-slate-500 hover:text-primary inline-flex items-center gap-1 mb-2"><ArrowLeft className="w-3.5 h-3.5" /> Back</button>
+      <button onClick={onBack} className="text-xs text-muted-foreground hover:text-primary inline-flex items-center gap-1 mb-2"><ArrowLeft className="w-3.5 h-3.5" /> Back</button>
       <SectionTitle Icon={Banknote} title="Repay Your Loan" />
 
       <div className="geo-gradient-emerald text-white rounded-2xl p-5 text-center mt-3 shadow-sm">
@@ -1797,22 +1829,22 @@ function RepayScreen({ loan, settings, outstanding, onSubmitted, onBack }: {
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-2">
-        <button onClick={() => { setMode('full'); setAmountStr(String(Math.round(outstanding))) }} className={`py-2.5 rounded-xl text-sm font-semibold border-2 transition ${mode === 'full' ? 'border-primary bg-primary/5 text-primary' : 'border-slate-200 text-slate-600 hover:border-primary/50'}`}>Pay Full</button>
-        <button onClick={() => setMode('partial')} className={`py-2.5 rounded-xl text-sm font-semibold border-2 transition ${mode === 'partial' ? 'border-primary bg-primary/5 text-primary' : 'border-slate-200 text-slate-600 hover:border-primary/50'}`}>Pay Partial</button>
+        <button onClick={() => { setMode('full'); setAmountStr(String(Math.round(outstanding))) }} className={`py-2.5 rounded-xl text-sm font-semibold border-2 transition ${mode === 'full' ? 'border-primary bg-primary/5 text-primary' : 'border-border text-muted-foreground hover:border-primary/50'}`}>Pay Full</button>
+        <button onClick={() => setMode('partial')} className={`py-2.5 rounded-xl text-sm font-semibold border-2 transition ${mode === 'partial' ? 'border-primary bg-primary/5 text-primary' : 'border-border text-muted-foreground hover:border-primary/50'}`}>Pay Partial</button>
       </div>
       {mode === 'partial' && (
         <div className="mt-3">
-          <label className="block text-xs font-semibold text-slate-700 mb-1.5">Amount to pay (PKR)</label>
+          <label className="block text-xs font-semibold text-foreground mb-1.5">Amount to pay (PKR)</label>
           <input value={amountStr} onChange={(e) => setAmountStr(e.target.value.replace(/[^0-9]/g, ''))} inputMode="numeric" placeholder="e.g. 5000"
-            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none text-sm transition" />
+            className="w-full px-3 py-2.5 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none text-sm transition" />
           {amount > outstanding && <p className="mt-1 text-[11px] text-amber-600">Max is PKR {Math.round(outstanding).toLocaleString()}</p>}
         </div>
       )}
 
-      <div className="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-2xl">
-        <div className="text-xs font-semibold text-slate-700 mb-2">Send your payment to:</div>
-        <div className="bg-white rounded-xl p-3 space-y-1.5 border border-slate-100">
-          <CopyRow label="Account Title" value={settings?.accountTitle || 'GEO Loan (Pvt) Ltd'} />
+      <div className="mt-4 p-4 bg-muted border border-border rounded-2xl">
+        <div className="text-xs font-semibold text-foreground mb-2">Send your payment to:</div>
+        <div className="bg-card rounded-xl p-3 space-y-1.5 border border-border">
+          <CopyRow label="Account Title" value={settings?.accountTitle || 'Smart Qarz (Pvt) Ltd'} />
           <CopyRow label="Account Number" value={settings?.accountNumber || '1234-5678-9012-3456'} />
           <CopyRow label="EasyPaisa / JazzCash" value={settings?.mobileAccount || '0300-1234567'} />
         </div>
@@ -1849,7 +1881,7 @@ function DashboardScreen({ loan, outstanding, pending, onRepay }: {
         <div className="flex items-center justify-between gap-3">
           <div>
             <div className="text-xs text-muted-foreground">Outstanding balance</div>
-            <div className="text-2xl font-bold text-slate-900">PKR {Math.round(outstanding).toLocaleString()}</div>
+            <div className="text-2xl font-bold text-foreground">PKR {Math.round(outstanding).toLocaleString()}</div>
           </div>
           {outstanding > 0 ? (
             repayPending ? (
@@ -1863,7 +1895,7 @@ function DashboardScreen({ loan, outstanding, pending, onRepay }: {
             <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2 inline-flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> Fully repaid</span>
           )}
         </div>
-        <p className="text-[11px] text-slate-500 mt-2.5">Pay early anytime — <strong>partial or full</strong>. The full markup applies regardless of how soon you repay.</p>
+        <p className="text-[11px] text-muted-foreground mt-2.5">Pay early anytime — <strong>partial or full</strong>. The full markup applies regardless of how soon you repay.</p>
       </div>
 
       <SectionTitle Icon={ListChecks} title="Installment Tracker" className="mt-5" />
@@ -1877,17 +1909,17 @@ function DashboardScreen({ loan, outstanding, pending, onRepay }: {
           const partial = !paid && dueThisWeek < weekly - 0.01 // the active week, partly covered
           const amountShown = paid ? weekly : dueThisWeek
           return (
-            <div key={inst.id} className="flex items-center gap-3 p-2.5 border-b border-slate-100 last:border-0">
+            <div key={inst.id} className="flex items-center gap-3 p-2.5 border-b border-border last:border-0">
               <div className={`w-6 h-6 rounded-full grid place-items-center text-[10px] font-bold ${
-                paid ? 'bg-emerald-600 text-white' : partial ? 'bg-amber-500 text-white' : 'bg-slate-100 text-slate-500'
+                paid ? 'bg-emerald-600 text-white' : partial ? 'bg-amber-500 text-white' : 'bg-muted text-muted-foreground'
               }`}>
                 {paid ? <CheckCircle2 className="w-3.5 h-3.5" /> : inst.weekNumber}
               </div>
               <div className="flex-1">
-                <div className="text-xs font-semibold text-slate-800">Week {inst.weekNumber}{paid ? ' (Paid)' : ''}</div>
-                <div className="text-[10px] text-slate-500">{paid ? 'Completed' : partial ? 'Remaining due' : 'Scheduled'}</div>
+                <div className="text-xs font-semibold text-foreground">Week {inst.weekNumber}{paid ? ' (Paid)' : ''}</div>
+                <div className="text-[10px] text-muted-foreground">{paid ? 'Completed' : partial ? 'Remaining due' : 'Scheduled'}</div>
               </div>
-              <div className={`text-xs font-bold ${partial ? 'text-amber-600' : 'text-slate-900'}`}>PKR {Math.round(amountShown).toLocaleString()}</div>
+              <div className={`text-xs font-bold ${partial ? 'text-amber-600' : 'text-foreground'}`}>PKR {Math.round(amountShown).toLocaleString()}</div>
             </div>
           )
         })}
@@ -1908,7 +1940,7 @@ function SectionTitle({
         <span className="w-7 h-7 rounded-lg bg-primary/10 grid place-items-center shrink-0">
           <Icon className="w-4 h-4 text-primary" />
         </span>
-        <h2 className="text-sm font-bold text-slate-800">{title}</h2>
+        <h2 className="text-sm font-bold text-foreground">{title}</h2>
       </div>
       <div className="geo-rule-gold mt-2 w-12" />
     </div>
@@ -1925,7 +1957,7 @@ function Field({
 }) {
   return (
     <div>
-      <label className="block text-xs font-semibold text-slate-700 mb-1.5">{label}</label>
+      <label className="block text-xs font-semibold text-foreground mb-1.5">{label}</label>
       <input
         type={type}
         value={value}
@@ -1934,7 +1966,7 @@ function Field({
         disabled={disabled}
         inputMode={inputMode}
         maxLength={maxLength}
-        className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none text-sm transition disabled:bg-slate-50 disabled:text-slate-500"
+        className="w-full px-3 py-2.5 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none text-sm transition disabled:bg-muted disabled:text-muted-foreground"
       />
       {hint && <p className="mt-1 text-[11px] text-amber-600">{hint}</p>}
     </div>
@@ -2000,8 +2032,8 @@ function CameraCapture({ facing, label, onCapture, onClose }: {
         )}
       </div>
       <div className="p-5 grid place-items-center bg-black">
-        <button onClick={capture} disabled={!!err} className="w-16 h-16 rounded-full bg-white ring-4 ring-white/30 disabled:opacity-40 grid place-items-center active:scale-95 transition">
-          <Camera className="w-7 h-7 text-slate-900" />
+        <button onClick={capture} disabled={!!err} className="w-16 h-16 rounded-full bg-card ring-4 ring-white/30 disabled:opacity-40 grid place-items-center active:scale-95 transition">
+          <Camera className="w-7 h-7 text-foreground" />
         </button>
         <p className="text-white/60 text-xs mt-2">Tap to capture</p>
       </div>
@@ -2029,18 +2061,18 @@ function UploadBox({
       <button
         onClick={() => (facing ? setCamOpen(true) : inputRef.current?.click())}
         className={`p-3 rounded-xl border-2 border-dashed text-center transition w-full ${
-          path || preview ? 'border-primary bg-primary/5' : 'border-slate-300 hover:border-primary/50 hover:bg-slate-50'
+          path || preview ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted'
         }`}
       >
         {preview ? (
           <div className="relative">
             <img src={preview} alt={label} className={`w-full ${wide ? 'h-40' : 'h-24'} object-cover rounded-lg border border-primary/20`} />
             {verifying ? (
-              <span className="absolute top-1 right-1 bg-white rounded-full p-0.5 shadow"><Loader2 className="w-3.5 h-3.5 text-primary animate-spin" /></span>
+              <span className="absolute top-1 right-1 bg-card rounded-full p-0.5 shadow"><Loader2 className="w-3.5 h-3.5 text-primary animate-spin" /></span>
             ) : path ? (
               <span className="absolute top-1 right-1 bg-emerald-600 text-white rounded-full p-0.5 shadow"><CheckCircle2 className="w-3.5 h-3.5" /></span>
             ) : null}
-            <div className="text-[11px] mt-1.5 text-slate-700 font-semibold">{label}</div>
+            <div className="text-[11px] mt-1.5 text-foreground font-semibold">{label}</div>
             <div className="text-[10px] text-primary mt-0.5">Tap to retake</div>
           </div>
         ) : (
@@ -2048,8 +2080,8 @@ function UploadBox({
             <span className="inline-grid place-items-center w-9 h-9 rounded-lg bg-primary/10 mx-auto">
               <Camera className="w-5 h-5 text-primary" />
             </span>
-            <div className="text-[11px] mt-1.5 text-slate-700 font-semibold">{label}</div>
-            <div className="text-[10px] text-slate-400 mt-0.5">{facing ? 'Tap to open camera' : 'Tap to upload'}</div>
+            <div className="text-[11px] mt-1.5 text-foreground font-semibold">{label}</div>
+            <div className="text-[10px] text-muted-foreground mt-0.5">{facing ? 'Tap to open camera' : 'Tap to upload'}</div>
           </>
         )}
       </button>
@@ -2077,13 +2109,13 @@ function UploadArea({
     <div>
       <button
         onClick={() => inputRef.current?.click()}
-        className="w-full p-6 rounded-2xl border-2 border-dashed border-slate-300 text-center hover:border-primary hover:bg-primary/5 transition"
+        className="w-full p-6 rounded-2xl border-2 border-dashed border-border text-center hover:border-primary hover:bg-primary/5 transition"
       >
         <span className="inline-grid place-items-center w-12 h-12 rounded-xl bg-primary/10">
           <Camera className="w-6 h-6 text-primary" />
         </span>
-        <div className="text-xs text-slate-700 mt-2">{file ? file.name : 'Tap to upload payment screenshot'}</div>
-        <div className="text-[10px] text-slate-400 mt-0.5">JPG, PNG (Max 5MB)</div>
+        <div className="text-xs text-foreground mt-2">{file ? file.name : 'Tap to upload payment screenshot'}</div>
+        <div className="text-[10px] text-muted-foreground mt-0.5">JPG, PNG (Max 5MB)</div>
       </button>
       <input
         ref={inputRef}
@@ -2114,8 +2146,8 @@ function UploadArea({
 function Row({ label, value, valueClass = '' }: { label: string; value: string; valueClass?: string }) {
   return (
     <div className="flex justify-between text-xs">
-      <span className="text-slate-600">{label}</span>
-      <span className={`font-semibold text-slate-900 ${valueClass}`}>{value}</span>
+      <span className="text-muted-foreground">{label}</span>
+      <span className={`font-semibold text-foreground ${valueClass}`}>{value}</span>
     </div>
   )
 }
@@ -2131,8 +2163,8 @@ function CopyRow({ label, value }: { label: string; value: string }) {
   }
   return (
     <div className="flex justify-between items-center text-xs">
-      <span className="text-slate-600">{label}</span>
-      <span className="font-semibold text-slate-900 flex items-center gap-1.5">
+      <span className="text-muted-foreground">{label}</span>
+      <span className="font-semibold text-foreground flex items-center gap-1.5">
         {value}
         <button onClick={copy} className="text-[10px] bg-primary text-primary-foreground px-1.5 py-1 rounded-md hover:opacity-90 transition">
           {copied ? <CheckCircle2 className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
@@ -2152,7 +2184,7 @@ function LogoutBtn() {
         window.location.href = '/app'
       }}
       disabled={loading}
-      className="text-sm text-slate-700 px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 inline-flex items-center gap-2 justify-center transition"
+      className="text-sm text-foreground px-4 py-2.5 rounded-xl border border-border hover:bg-muted inline-flex items-center gap-2 justify-center transition"
     >
       <LogOut className="w-4 h-4" /> Logout
     </button>
@@ -2169,36 +2201,36 @@ function NotifDrawer({
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/40" onClick={onClose}>
       <div
-        className="w-full max-w-sm bg-white h-full overflow-y-auto p-4"
+        className="w-full max-w-sm bg-card h-full overflow-y-auto p-4"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-bold text-lg text-slate-900">Notifications</h3>
+          <h3 className="font-bold text-lg text-foreground">Notifications</h3>
           <div className="flex items-center gap-3">
             <button onClick={() => onMarkRead()} className="text-xs text-primary font-semibold hover:opacity-80 transition">
               Mark all read
             </button>
-            <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition" aria-label="Close">✕</button>
+            <button onClick={onClose} className="text-muted-foreground hover:text-muted-foreground transition" aria-label="Close">✕</button>
           </div>
         </div>
         {notifications.length === 0 ? (
-          <div className="text-center text-sm text-slate-500 py-8">No notifications</div>
+          <div className="text-center text-sm text-muted-foreground py-8">No notifications</div>
         ) : (
           <div className="space-y-2">
             {notifications.map((n) => (
               <div
                 key={n.id}
                 className={`p-3 rounded-xl border ${
-                  n.read ? 'bg-white border-slate-200' : 'bg-primary/5 border-primary/30'
+                  n.read ? 'bg-card border-border' : 'bg-primary/5 border-primary/30'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <div className="font-semibold text-sm text-slate-900">{n.title}</div>
-                  <div className="text-[10px] text-slate-500">
+                  <div className="font-semibold text-sm text-foreground">{n.title}</div>
+                  <div className="text-[10px] text-muted-foreground">
                     {new Date(n.createdAt).toLocaleString('en-PK', { dateStyle: 'short', timeStyle: 'short' })}
                   </div>
                 </div>
-                <div className="text-xs text-slate-600 mt-1">{n.message}</div>
+                <div className="text-xs text-muted-foreground mt-1">{n.message}</div>
               </div>
             ))}
           </div>
